@@ -1,0 +1,16 @@
+17:18:11 **** Build of configuration Debug for project lab0 ****
+cs-make all 
+'Building file: ../lab0.c'
+'Invoking: ARM Sourcery Windows GCC C Compiler'
+arm-none-eabi-gcc -O0 -Wall -Wa,-adhlns="lab0.o.lst" -c -fmessage-length=0 -mapcs-frame -MMD -MP -MF"lab0.d" -MT"lab0.d" -mcpu=arm7tdmi -g3 -gdwarf-2 -o "lab0.o" "../lab0.c"
+../lab0.c:19:6: warning: return type of 'main' is not 'int'
+'Finished building: ../lab0.c'
+' '
+'Building target: lab0.elf'
+'Invoking: ARM Sourcery Windows GCC C Linker'
+arm-none-eabi-gcc -T"../lab0.ld" -nostartfiles -Wl,-Map,lab0.map -mcpu=arm7tdmi -g3 -gdwarf-2 -o "lab0.elf"  ./lab0.o   
+'Finished building target: lab0.elf'
+Command canceled
+
+17:18:12 Build Cancelled (took 1s.43ms)
+

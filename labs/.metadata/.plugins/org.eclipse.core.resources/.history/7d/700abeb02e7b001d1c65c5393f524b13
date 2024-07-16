@@ -1,0 +1,88 @@
+#include <s3c44b0x.h>
+#include <s3cev40.h>
+#include <pbs.h>
+#include <timers.h>
+
+extern void isr_PB_dummy( void );
+
+void pbs_init( void )
+{
+    timers_init();
+}
+
+uint8 pb_scan( void )
+{
+    if( (PDATG&PB_LEFT)==PB_DOWN )
+        return PB_LEFT;
+    else if( (PDATG&PB_RIGHT)==PB_DOWN )
+        return PB_RIGHT;
+    else
+        return PB_FAILURE;
+}
+
+uint8 pb_pressed( void )
+{
+	if( pb_scan() == PB_FAILURE)
+		return 0;
+	return 1;
+}
+
+uint8 pb_getchar( void ){
+	uint8 s;
+    while(!pb_pressed());
+    sw_delay_ms( PB_KEYDOWN_DELAY );
+    s = pb_scan();
+    while(pb_pressed());
+    sw_delay_ms( PB_KEYUP_DELAY );
+    return s;
+}
+
+uint8 pb_timeout_getchar( uint16 ms ){
+	uint8 s;
+	timer3_start_timeout(ms*10);
+
+	while(!pb_pressed())
+		if(timer3_timeout())
+			return PB_TIMEOUT;
+
+	while( pb_pressed() );
+	timer3_start();
+	sw_delay_ms( PB_KEYDOWN_DELAY );
+
+	s = pb_scan();
+
+	while( !pb_pressed() );
+	sw_delay_ms( PB_KEYUP_DELAY );
+	return s;
+}
+
+uint8 pb_getchartime( uint16 *ms )
+{
+    uint8 scancode;
+    
+    while( pb_pressed() );
+    timer3_start();
+    sw_delay_ms( PB_KEYDOWN_DELAY );
+    
+    scancode = pb_scan();
+    
+    while( !pb_pressed() );
+    *ms = timer3_stop() / 10;
+    sw_delay_ms( PB_KEYUP_DELAY );
+
+    return scancode;
+}
+
+void pbs_open( void (*isr)(void) )
+{
+    pISR_PB   = (uint32) isr;
+    EXTINTPND = PB_LEFT | PB_RIGHT;// no estoy seguro
+    I_ISPC    = BIT_PB;
+    INTMSK   &= ~(BIT_PB);
+}
+
+void pbs_close( void )
+{
+    INTMSK  |= BIT_PB;
+    pISR_PB  = (uint32) isr_PB_dummy;
+}

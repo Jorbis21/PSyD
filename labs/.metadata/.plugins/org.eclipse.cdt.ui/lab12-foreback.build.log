@@ -1,0 +1,11 @@
+17:07:32 **** Incremental Build of configuration Debug for project lab12-foreback ****
+cs-make all 
+'Invoking: ARM Sourcery Windows GNU Print Size'
+arm-none-eabi-size  --format=berkeley lab12-foreback.elf
+   text	   data	    bss	    dec	    hex	filename
+  27916	     18	  38432	  66366	  1033e	lab12-foreback.elf
+'Finished building: lab12-foreback.siz'
+' '
+
+17:07:32 Build Finished (took 399ms)
+

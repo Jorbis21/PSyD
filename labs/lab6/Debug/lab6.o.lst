@@ -1,0 +1,1999 @@
+   1              		.cpu arm7tdmi
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 6
+  10              		.eabi_attribute 18, 4
+  11              		.file	"lab6.c"
+  21              	.Ltext0:
+  22              		.file 1 "../lab6.c"
+ 2070              		.align	2
+ 2071              	.LC0:
+ 2072 0000 0A0A00   		.ascii	"\012\012\000"
+ 2073 0003 00       		.align	2
+ 2074              	.LC1:
+ 2075 0004 54455354 		.ascii	"TEST DE TEMPORIZADORES\012\000"
+ 2075      20444520 
+ 2075      54454D50 
+ 2075      4F52495A 
+ 2075      41444F52 
+ 2076              		.align	2
+ 2077              	.LC2:
+ 2078 001c 2D2D2D2D 		.ascii	"----------------------\012\012\000"
+ 2078      2D2D2D2D 
+ 2078      2D2D2D2D 
+ 2078      2D2D2D2D 
+ 2078      2D2D2D2D 
+ 2079 0035 000000   		.align	2
+ 2080              	.LC3:
+ 2081 0038 20202D20 		.ascii	"  - Error en la configuraci\363n del gestor de relo"
+ 2081      4572726F 
+ 2081      7220656E 
+ 2081      206C6120 
+ 2081      636F6E66 
+ 2082 0068 6A207920 		.ascii	"j y energia\012\000"
+ 2082      656E6572 
+ 2082      6769610A 
+ 2082      00
+ 2083 0075 000000   		.align	2
+ 2084              	.LC4:
+ 2085 0078 20202D20 		.ascii	"  - Medida con timer3_start() / timer3_stop() del r"
+ 2085      4D656469 
+ 2085      64612063 
+ 2085      6F6E2074 
+ 2085      696D6572 
+ 2086 00ab 65746172 		.ascii	"etardo de un bucle con 1 s de tiempo de ejecuci\363"
+ 2086      646F2064 
+ 2086      6520756E 
+ 2086      20627563 
+ 2086      6C652063 
+ 2087 00db 6E206170 		.ascii	"n aproximada...\012\000"
+ 2087      726F7869 
+ 2087      6D616461 
+ 2087      2E2E2E0A 
+ 2087      00
+ 2088              		.align	2
+ 2089              	.LC5:
+ 2090 00ec 20202020 		.ascii	"    ... retardo medido: \000"
+ 2090      2E2E2E20 
+ 2090      72657461 
+ 2090      72646F20 
+ 2090      6D656469 
+ 2091 0105 000000   		.align	2
+ 2092              	.LC6:
+ 2093 0108 206D730A 		.ascii	" ms\012\000"
+ 2093      00
+ 2094 010d 000000   		.align	2
+ 2095              	.LC7:
+ 2096 0110 20202D20 		.ascii	"  - Medida con timer3_start() / timer3_stop() del r"
+ 2096      4D656469 
+ 2096      64612063 
+ 2096      6F6E2074 
+ 2096      696D6572 
+ 2097 0143 65746172 		.ascii	"etardo de 1 s generado por sw_delay_ms()...\012\000"
+ 2097      646F2064 
+ 2097      65203120 
+ 2097      73206765 
+ 2097      6E657261 
+ 2098              		.align	2
+ 2099              	.LC8:
+ 2100 0170 20202D20 		.ascii	"  - Medida con timer3_start() / timer3_stop() del r"
+ 2100      4D656469 
+ 2100      64612063 
+ 2100      6F6E2074 
+ 2100      696D6572 
+ 2101 01a3 65746172 		.ascii	"etardo de 1 s generado por sw_delay_s()...\012\000"
+ 2101      646F2064 
+ 2101      65203120 
+ 2101      73206765 
+ 2101      6E657261 
+ 2102 01cf 00       		.align	2
+ 2103              	.LC9:
+ 2104 01d0 20202D20 		.ascii	"  - Medida con timer3_start() / timer3_stop() del r"
+ 2104      4D656469 
+ 2104      64612063 
+ 2104      6F6E2074 
+ 2104      696D6572 
+ 2105 0203 65746172 		.ascii	"etardo de 1 s generado por timer0_open_ms() en modo"
+ 2105      646F2064 
+ 2105      65203120 
+ 2105      73206765 
+ 2105      6E657261 
+ 2106 0236 2054494D 		.ascii	" TIMER_ONE_SHOT...\012\000"
+ 2106      45525F4F 
+ 2106      4E455F53 
+ 2106      484F542E 
+ 2106      2E2E0A00 
+ 2107 024a 0000     		.align	2
+ 2108              	.LC10:
+ 2109 024c 20202D20 		.ascii	"  - Medida con timer3_start() / timer3_stop() del r"
+ 2109      4D656469 
+ 2109      64612063 
+ 2109      6F6E2074 
+ 2109      696D6572 
+ 2110 027f 65746172 		.ascii	"etardo de 1 s generado por timer0_open_ms() en modo"
+ 2110      646F2064 
+ 2110      65203120 
+ 2110      73206765 
+ 2110      6E657261 
+ 2111 02b2 2054494D 		.ascii	" TIMER_INTERVAL...\012\000"
+ 2111      45525F49 
+ 2111      4E544552 
+ 2111      56414C2E 
+ 2111      2E2E0A00 
+ 2112 02c6 0000     		.align	2
+ 2113              	.LC11:
+ 2114 02c8 20202D20 		.ascii	"  - Medida con timer3_start() / timer3_stop() del r"
+ 2114      4D656469 
+ 2114      64612063 
+ 2114      6F6E2074 
+ 2114      696D6572 
+ 2115 02fb 65746172 		.ascii	"etardo de 1 s generado por timer0_open_tick() con t"
+ 2115      646F2064 
+ 2115      65203120 
+ 2115      73206765 
+ 2115      6E657261 
+ 2116 032e 70733D31 		.ascii	"ps=1...\012\000"
+ 2116      2E2E2E0A 
+ 2116      00
+ 2117 0337 00       		.align	2
+ 2118              	.LC12:
+ 2119 0338 20202D20 		.ascii	"  - Medida con timer3_start() / timer3_stop() del r"
+ 2119      4D656469 
+ 2119      64612063 
+ 2119      6F6E2074 
+ 2119      696D6572 
+ 2120 036b 65746172 		.ascii	"etardo de 1 s generado por timer0_open_tick() con t"
+ 2120      646F2064 
+ 2120      65203120 
+ 2120      73206765 
+ 2120      6E657261 
+ 2121 039e 70733D31 		.ascii	"ps=100...\012\000"
+ 2121      30302E2E 
+ 2121      2E0A00
+ 2122 03a9 000000   		.align	2
+ 2123              	.LC13:
+ 2124 03ac 20202D20 		.ascii	"  - Medida con timer3_start() / timer3_stop() del r"
+ 2124      4D656469 
+ 2124      64612063 
+ 2124      6F6E2074 
+ 2124      696D6572 
+ 2125 03df 65746172 		.ascii	"etardo de 1 s generado por timer0_open_tick() con t"
+ 2125      646F2064 
+ 2125      65203120 
+ 2125      73206765 
+ 2125      6E657261 
+ 2126 0412 70733D31 		.ascii	"ps=1000...\012\000"
+ 2126      3030302E 
+ 2126      2E2E0A00 
+ 2127 041e 0000     		.align	2
+ 2128              	.LC14:
+ 2129 0420 20202D20 		.ascii	"  - Medida con timer3_start() / timer3_stop() del r"
+ 2129      4D656469 
+ 2129      64612063 
+ 2129      6F6E2074 
+ 2129      696D6572 
+ 2130 0453 65746172 		.ascii	"etardo de 1 s generado por timer0_open_tick() con t"
+ 2130      646F2064 
+ 2130      65203120 
+ 2130      73206765 
+ 2130      6E657261 
+ 2131 0486 70733D32 		.ascii	"ps=2000...\012\000"
+ 2131      3030302E 
+ 2131      2E2E0A00 
+ 2132 0492 0000     		.align	2
+ 2133              	.LC15:
+ 2134 0494 20202D20 		.ascii	"  - Retardo hardware de 5 s usando timer3_delay_ms("
+ 2134      52657461 
+ 2134      72646F20 
+ 2134      68617264 
+ 2134      77617265 
+ 2135 04c7 293A206D 		.ascii	"): m\355dalo...\012\000"
+ 2135      ED64616C 
+ 2135      6F2E2E2E 
+ 2135      0A00
+ 2136 04d5 000000   		.align	2
+ 2137              	.LC16:
+ 2138 04d8 20202020 		.ascii	"    ... fin\012\000"
+ 2138      2E2E2E20 
+ 2138      66696E0A 
+ 2138      00
+ 2139 04e5 000000   		.align	2
+ 2140              	.LC17:
+ 2141 04e8 20202D20 		.ascii	"  - Retardo hardware de 5 s usando timer3_delay_s()"
+ 2141      52657461 
+ 2141      72646F20 
+ 2141      68617264 
+ 2141      77617265 
+ 2142 051b 3A206DED 		.ascii	": m\355dalo...\012\000"
+ 2142      64616C6F 
+ 2142      2E2E2E0A 
+ 2142      00
+ 2143              		.align	2
+ 2144              	.LC18:
+ 2145 0528 20202D20 		.ascii	"  - Retardo hardware de 5 s usando timer3_start_tim"
+ 2145      52657461 
+ 2145      72646F20 
+ 2145      68617264 
+ 2145      77617265 
+ 2146 055b 656F7574 		.ascii	"eout(): m\355dalo...\012\000"
+ 2146      28293A20 
+ 2146      6DED6461 
+ 2146      6C6F2E2E 
+ 2146      2E0A00
+ 2147 056e 0000     		.align	2
+ 2148              	.LC19:
+ 2149 0570 54455354 		.ascii	"TEST DE KEYPAD Y PBS\012\000"
+ 2149      20444520 
+ 2149      4B455950 
+ 2149      41442059 
+ 2149      20504253 
+ 2150 0586 0000     		.align	2
+ 2151              	.LC20:
+ 2152 0588 2D2D2D2D 		.ascii	"--------------------\012\012\000"
+ 2152      2D2D2D2D 
+ 2152      2D2D2D2D 
+ 2152      2D2D2D2D 
+ 2152      2D2D2D2D 
+ 2153 059f 00       		.align	2
+ 2154              	.LC21:
+ 2155 05a0 20202D20 		.ascii	"  - Error en la funci\363n pb_pressed()\012\000"
+ 2155      4572726F 
+ 2155      7220656E 
+ 2155      206C6120 
+ 2155      66756E63 
+ 2156 05c6 0000     		.align	2
+ 2157              	.LC22:
+ 2158 05c8 20202D20 		.ascii	"  - Error en la funci\363n keypad_pressed()\012\000"
+ 2158      4572726F 
+ 2158      7220656E 
+ 2158      206C6120 
+ 2158      66756E63 
+ 2159 05f2 0000     		.align	2
+ 2160              	.LC23:
+ 2161 05f4 4C656374 		.ascii	"Lectura del keypad sin espera m\341xima usando keyp"
+ 2161      75726120 
+ 2161      64656C20 
+ 2161      6B657970 
+ 2161      61642073 
+ 2162 0624 61645F67 		.ascii	"ad_getchar():\012\000"
+ 2162      65746368 
+ 2162      61722829 
+ 2162      3A0A00
+ 2163 0633 00       		.align	2
+ 2164              	.LC24:
+ 2165 0634 20202D20 		.ascii	"  - Error de lectura\012\000"
+ 2165      4572726F 
+ 2165      72206465 
+ 2165      206C6563 
+ 2165      74757261 
+ 2166 064a 0000     		.align	2
+ 2167              	.LC25:
+ 2168 064c 20202D20 		.ascii	"  - La tecla 0x\000"
+ 2168      4C612074 
+ 2168      65636C61 
+ 2168      20307800 
+ 2169              		.align	2
+ 2170              	.LC26:
+ 2171 065c 20686120 		.ascii	" ha sido presionada\012\000"
+ 2171      7369646F 
+ 2171      20707265 
+ 2171      73696F6E 
+ 2171      6164610A 
+ 2172 0671 000000   		.align	2
+ 2173              	.LC27:
+ 2174 0674 4C656374 		.ascii	"Lectura del keypad con espera m\341xima de 5 s usan"
+ 2174      75726120 
+ 2174      64656C20 
+ 2174      6B657970 
+ 2174      61642063 
+ 2175 06a4 646F206B 		.ascii	"do keypad_timeout_getchar():\012\000"
+ 2175      65797061 
+ 2175      645F7469 
+ 2175      6D656F75 
+ 2175      745F6765 
+ 2176 06c2 0000     		.align	2
+ 2177              	.LC28:
+ 2178 06c4 20202D20 		.ascii	"  - Timeout\012\000"
+ 2178      54696D65 
+ 2178      6F75740A 
+ 2178      00
+ 2179 06d1 000000   		.align	2
+ 2180              	.LC29:
+ 2181 06d4 4C656374 		.ascii	"Lectura del keypad por interrupci\363n usando keypa"
+ 2181      75726120 
+ 2181      64656C20 
+ 2181      6B657970 
+ 2181      61642070 
+ 2182 0704 645F6765 		.ascii	"d_getchartime():\012\000"
+ 2182      74636861 
+ 2182      7274696D 
+ 2182      6528293A 
+ 2182      0A00
+ 2183 0716 0000     		.align	2
+ 2184              	.LC30:
+ 2185 0718 20686120 		.ascii	" ha sido presionada durante \000"
+ 2185      7369646F 
+ 2185      20707265 
+ 2185      73696F6E 
+ 2185      61646120 
+ 2186 0735 000000   		.align	2
+ 2187              	.LC31:
+ 2188 0738 206D7320 		.ascii	" ms \012\000"
+ 2188      0A00
+ 2189 073e 0000     		.align	2
+ 2190              	.LC32:
+ 2191 0740 4C656374 		.ascii	"Lectura de pulsadores sin espera m\341xima usando p"
+ 2191      75726120 
+ 2191      64652070 
+ 2191      756C7361 
+ 2191      646F7265 
+ 2192 0770 625F6765 		.ascii	"b_getchar():\012\000"
+ 2192      74636861 
+ 2192      7228293A 
+ 2192      0A00
+ 2193 077e 0000     		.align	2
+ 2194              	.LC33:
+ 2195 0780 20202D20 		.ascii	"  - El pulsador izquierdo ha sido presionado\012\000"
+ 2195      456C2070 
+ 2195      756C7361 
+ 2195      646F7220 
+ 2195      697A7175 
+ 2196 07ae 0000     		.align	2
+ 2197              	.LC34:
+ 2198 07b0 20202D20 		.ascii	"  - El pulsador derecho ha sido presionado\012\000"
+ 2198      456C2070 
+ 2198      756C7361 
+ 2198      646F7220 
+ 2198      64657265 
+ 2199              		.align	2
+ 2200              	.LC35:
+ 2201 07dc 4C656374 		.ascii	"Lectura de pulsadores con espera m\341xima de 5 s u"
+ 2201      75726120 
+ 2201      64652070 
+ 2201      756C7361 
+ 2201      646F7265 
+ 2202 080c 73616E64 		.ascii	"sando pb_timeout_getchar():\012\000"
+ 2202      6F207062 
+ 2202      5F74696D 
+ 2202      656F7574 
+ 2202      5F676574 
+ 2203 0829 000000   		.align	2
+ 2204              	.LC36:
+ 2205 082c 4C656374 		.ascii	"Lectura de pulsadores por interrupci\363n usando pb"
+ 2205      75726120 
+ 2205      64652070 
+ 2205      756C7361 
+ 2205      646F7265 
+ 2206 085c 5F676574 		.ascii	"_getchartime():\012\000"
+ 2206      63686172 
+ 2206      74696D65 
+ 2206      28293A0A 
+ 2206      00
+ 2207 086d 000000   		.align	2
+ 2208              	.LC37:
+ 2209 0870 20202D20 		.ascii	"  - El pulsador izquierdo ha sido presionado durant"
+ 2209      456C2070 
+ 2209      756C7361 
+ 2209      646F7220 
+ 2209      697A7175 
+ 2210 08a3 652000   		.ascii	"e \000"
+ 2211 08a6 0000     		.align	2
+ 2212              	.LC38:
+ 2213 08a8 20202D20 		.ascii	"  - El pulsador derecho ha sido presionado durante "
+ 2213      456C2070 
+ 2213      756C7361 
+ 2213      646F7220 
+ 2213      64657265 
+ 2214 08db 00       		.ascii	"\000"
+ 2215              		.text
+ 2216              		.align	2
+ 2217              		.global	main
+ 2219              	main:
+ 2220              	.LFB0:
+   1:../lab6.c     **** /*-------------------------------------------------------------------
+   2:../lab6.c     **** **
+   3:../lab6.c     **** **  Fichero:
+   4:../lab6.c     **** **    lab6.c  28/1/2021
+   5:../lab6.c     **** **
+   6:../lab6.c     **** **    (c) J.M. Mendias
+   7:../lab6.c     **** **    Programación de Sistemas y Dispositivos
+   8:../lab6.c     **** **    Facultad de Informática. Universidad Complutense de Madrid
+   9:../lab6.c     **** **
+  10:../lab6.c     **** **  Propósito:
+  11:../lab6.c     **** **    Test del laboratorio 6
+  12:../lab6.c     **** **
+  13:../lab6.c     **** **  Notas de diseño:
+  14:../lab6.c     **** **
+  15:../lab6.c     **** **-----------------------------------------------------------------*/
+  16:../lab6.c     **** 
+  17:../lab6.c     **** #include <s3c44b0x.h>
+  18:../lab6.c     **** #include <s3cev40.h>
+  19:../lab6.c     **** #include <common_types.h>
+  20:../lab6.c     **** #include <uart.h>
+  21:../lab6.c     **** #include <system.h>
+  22:../lab6.c     **** #include <timers.h>
+  23:../lab6.c     **** #include <keypad.h>
+  24:../lab6.c     **** #include <pbs.h>
+  25:../lab6.c     **** 
+  26:../lab6.c     **** void isr_keypad( void ) __attribute__ ((interrupt ("IRQ")));
+  27:../lab6.c     **** void isr_pbs( void ) __attribute__ ((interrupt ("IRQ")));
+  28:../lab6.c     **** void isr_timer0( void ) __attribute__ ((interrupt ("IRQ")));
+  29:../lab6.c     **** 
+  30:../lab6.c     **** void one_second_loop( void );
+  31:../lab6.c     **** 
+  32:../lab6.c     **** volatile boolean flagTimer0;
+  33:../lab6.c     **** volatile boolean flagKeypad;
+  34:../lab6.c     **** volatile boolean flagPbs;
+  35:../lab6.c     **** 
+  36:../lab6.c     **** void main( void )
+  37:../lab6.c     **** {
+ 2221              		.loc 1 37 0
+ 2222              		.cfi_startproc
+ 2223              		@ Function supports interworking.
+ 2224              		@ args = 0, pretend = 0, frame = 8
+ 2225              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2226 0000 0DC0A0E1 		mov	ip, sp
+ 2227              	.LCFI0:
+ 2228              		.cfi_def_cfa_register 12
+ 2229 0004 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 2230 0008 04B04CE2 		sub	fp, ip, #4
+ 2231              		.cfi_offset 14, -8
+ 2232              		.cfi_offset 13, -12
+ 2233              		.cfi_offset 11, -16
+ 2234              	.LCFI1:
+ 2235              		.cfi_def_cfa 11, 4
+ 2236 000c 08D04DE2 		sub	sp, sp, #8
+  38:../lab6.c     ****     uint16 ms, ticks, time;
+  39:../lab6.c     ****     uint8 scancode;
+  40:../lab6.c     **** 
+  41:../lab6.c     ****     sys_init();
+ 2237              		.loc 1 41 0
+ 2238 0010 FEFFFFEB 		bl	sys_init
+  42:../lab6.c     ****     uart0_init();
+ 2239              		.loc 1 42 0
+ 2240 0014 FEFFFFEB 		bl	uart0_init
+  43:../lab6.c     ****     timers_init();
+ 2241              		.loc 1 43 0
+ 2242 0018 FEFFFFEB 		bl	timers_init
+  44:../lab6.c     ****     keypad_init();
+ 2243              		.loc 1 44 0
+ 2244 001c FEFFFFEB 		bl	keypad_init
+  45:../lab6.c     ****     pbs_init();
+ 2245              		.loc 1 45 0
+ 2246 0020 FEFFFFEB 		bl	pbs_init
+  46:../lab6.c     ****     
+  47:../lab6.c     ****       /************************************/
+  48:../lab6.c     **** 
+  49:../lab6.c     ****     uart0_puts( "\n\n" );
+ 2247              		.loc 1 49 0
+ 2248 0024 18099FE5 		ldr	r0, .L72
+ 2249 0028 FEFFFFEB 		bl	uart0_puts
+  50:../lab6.c     ****     uart0_puts( "TEST DE TEMPORIZADORES\n" );
+ 2250              		.loc 1 50 0
+ 2251 002c 14099FE5 		ldr	r0, .L72+4
+ 2252 0030 FEFFFFEB 		bl	uart0_puts
+  51:../lab6.c     ****     uart0_puts( "----------------------\n\n" );
+ 2253              		.loc 1 51 0
+ 2254 0034 10099FE5 		ldr	r0, .L72+8
+ 2255 0038 FEFFFFEB 		bl	uart0_puts
+  52:../lab6.c     ****     
+  53:../lab6.c     ****     if( ((PLLCON & ~(0x3 << 10 ) & ~(0x3 << 2)) != 0x38021) || ((CLKSLOW & ~(0xf)) != 0) )
+ 2256              		.loc 1 53 0
+ 2257 003c 7637A0E3 		mov	r3, #30932992
+ 2258 0040 003093E5 		ldr	r3, [r3, #0]
+ 2259 0044 033BC3E3 		bic	r3, r3, #3072
+ 2260 0048 0C30C3E3 		bic	r3, r3, #12
+ 2261 004c FC289FE5 		ldr	r2, .L72+12
+ 2262 0050 020053E1 		cmp	r3, r2
+ 2263 0054 0400001A 		bne	.L2
+ 2264              		.loc 1 53 0 is_stmt 0 discriminator 1
+ 2265 0058 F4389FE5 		ldr	r3, .L72+16
+ 2266 005c 003093E5 		ldr	r3, [r3, #0]
+ 2267 0060 0F30C3E3 		bic	r3, r3, #15
+ 2268 0064 000053E3 		cmp	r3, #0
+ 2269 0068 0200000A 		beq	.L3
+ 2270              	.L2:
+  54:../lab6.c     ****     {
+  55:../lab6.c     ****         uart0_puts( "  - Error en la configuración del gestor de reloj y energia\n" );
+ 2271              		.loc 1 55 0 is_stmt 1
+ 2272 006c E4089FE5 		ldr	r0, .L72+20
+ 2273 0070 FEFFFFEB 		bl	uart0_puts
+ 2274              	.L4:
+  56:../lab6.c     ****         while( 1 );
+ 2275              		.loc 1 56 0 discriminator 1
+ 2276 0074 FEFFFFEA 		b	.L4
+ 2277              	.L3:
+  57:../lab6.c     ****     } 
+  58:../lab6.c     **** 
+  59:../lab6.c     ****     uart0_puts( "  - Medida con timer3_start() / timer3_stop() del retardo de un bucle con 1 s de t
+ 2278              		.loc 1 59 0
+ 2279 0078 DC089FE5 		ldr	r0, .L72+24
+ 2280 007c FEFFFFEB 		bl	uart0_puts
+  60:../lab6.c     ****     timer3_start() ;
+ 2281              		.loc 1 60 0
+ 2282 0080 FEFFFFEB 		bl	timer3_start
+  61:../lab6.c     ****     one_second_loop();
+ 2283              		.loc 1 61 0
+ 2284 0084 FEFFFFEB 		bl	one_second_loop
+  62:../lab6.c     ****     ms = timer3_stop() / 10;
+ 2285              		.loc 1 62 0
+ 2286 0088 FEFFFFEB 		bl	timer3_stop
+ 2287 008c 0030A0E1 		mov	r3, r0
+ 2288 0090 0320A0E1 		mov	r2, r3
+ 2289 0094 C4389FE5 		ldr	r3, .L72+28
+ 2290 0098 921383E0 		umull	r1, r3, r2, r3
+ 2291 009c A331A0E1 		mov	r3, r3, lsr #3
+ 2292 00a0 B0314BE1 		strh	r3, [fp, #-16]	@ movhi
+  63:../lab6.c     ****     uart0_puts( "    ... retardo medido: " );
+ 2293              		.loc 1 63 0
+ 2294 00a4 B8089FE5 		ldr	r0, .L72+32
+ 2295 00a8 FEFFFFEB 		bl	uart0_puts
+  64:../lab6.c     ****     uart0_putint( ms );
+ 2296              		.loc 1 64 0
+ 2297 00ac B0315BE1 		ldrh	r3, [fp, #-16]
+ 2298 00b0 0300A0E1 		mov	r0, r3
+ 2299 00b4 FEFFFFEB 		bl	uart0_putint
+  65:../lab6.c     ****     uart0_puts( " ms\n" );
+ 2300              		.loc 1 65 0
+ 2301 00b8 A8089FE5 		ldr	r0, .L72+36
+ 2302 00bc FEFFFFEB 		bl	uart0_puts
+  66:../lab6.c     ****    
+  67:../lab6.c     ****     uart0_puts( "  - Medida con timer3_start() / timer3_stop() del retardo de 1 s generado por sw_d
+ 2303              		.loc 1 67 0
+ 2304 00c0 A4089FE5 		ldr	r0, .L72+40
+ 2305 00c4 FEFFFFEB 		bl	uart0_puts
+  68:../lab6.c     ****     timer3_start() ;
+ 2306              		.loc 1 68 0
+ 2307 00c8 FEFFFFEB 		bl	timer3_start
+  69:../lab6.c     ****     sw_delay_ms( 1000 );
+ 2308              		.loc 1 69 0
+ 2309 00cc FA0FA0E3 		mov	r0, #1000
+ 2310 00d0 FEFFFFEB 		bl	sw_delay_ms
+  70:../lab6.c     ****     ms = timer3_stop() / 10;
+ 2311              		.loc 1 70 0
+ 2312 00d4 FEFFFFEB 		bl	timer3_stop
+ 2313 00d8 0030A0E1 		mov	r3, r0
+ 2314 00dc 0320A0E1 		mov	r2, r3
+ 2315 00e0 78389FE5 		ldr	r3, .L72+28
+ 2316 00e4 921383E0 		umull	r1, r3, r2, r3
+ 2317 00e8 A331A0E1 		mov	r3, r3, lsr #3
+ 2318 00ec B0314BE1 		strh	r3, [fp, #-16]	@ movhi
+  71:../lab6.c     ****     uart0_puts( "    ... retardo medido: " );
+ 2319              		.loc 1 71 0
+ 2320 00f0 6C089FE5 		ldr	r0, .L72+32
+ 2321 00f4 FEFFFFEB 		bl	uart0_puts
+  72:../lab6.c     ****     uart0_putint( ms );
+ 2322              		.loc 1 72 0
+ 2323 00f8 B0315BE1 		ldrh	r3, [fp, #-16]
+ 2324 00fc 0300A0E1 		mov	r0, r3
+ 2325 0100 FEFFFFEB 		bl	uart0_putint
+  73:../lab6.c     ****     uart0_puts( " ms\n" );
+ 2326              		.loc 1 73 0
+ 2327 0104 5C089FE5 		ldr	r0, .L72+36
+ 2328 0108 FEFFFFEB 		bl	uart0_puts
+  74:../lab6.c     ****    
+  75:../lab6.c     ****     uart0_puts( "  - Medida con timer3_start() / timer3_stop() del retardo de 1 s generado por sw_d
+ 2329              		.loc 1 75 0
+ 2330 010c 5C089FE5 		ldr	r0, .L72+44
+ 2331 0110 FEFFFFEB 		bl	uart0_puts
+  76:../lab6.c     ****     timer3_start() ;
+ 2332              		.loc 1 76 0
+ 2333 0114 FEFFFFEB 		bl	timer3_start
+  77:../lab6.c     ****     sw_delay_s( 1 );
+ 2334              		.loc 1 77 0
+ 2335 0118 0100A0E3 		mov	r0, #1
+ 2336 011c FEFFFFEB 		bl	sw_delay_s
+  78:../lab6.c     ****     ms = timer3_stop() / 10;
+ 2337              		.loc 1 78 0
+ 2338 0120 FEFFFFEB 		bl	timer3_stop
+ 2339 0124 0030A0E1 		mov	r3, r0
+ 2340 0128 0320A0E1 		mov	r2, r3
+ 2341 012c 2C389FE5 		ldr	r3, .L72+28
+ 2342 0130 921383E0 		umull	r1, r3, r2, r3
+ 2343 0134 A331A0E1 		mov	r3, r3, lsr #3
+ 2344 0138 B0314BE1 		strh	r3, [fp, #-16]	@ movhi
+  79:../lab6.c     ****     uart0_puts( "    ... retardo medido: " );
+ 2345              		.loc 1 79 0
+ 2346 013c 20089FE5 		ldr	r0, .L72+32
+ 2347 0140 FEFFFFEB 		bl	uart0_puts
+  80:../lab6.c     ****     uart0_putint( ms );
+ 2348              		.loc 1 80 0
+ 2349 0144 B0315BE1 		ldrh	r3, [fp, #-16]
+ 2350 0148 0300A0E1 		mov	r0, r3
+ 2351 014c FEFFFFEB 		bl	uart0_putint
+  81:../lab6.c     ****     uart0_puts( " ms\n" );
+ 2352              		.loc 1 81 0
+ 2353 0150 10089FE5 		ldr	r0, .L72+36
+ 2354 0154 FEFFFFEB 		bl	uart0_puts
+  82:../lab6.c     ****     
+  83:../lab6.c     ****     uart0_puts( "  - Medida con timer3_start() / timer3_stop() del retardo de 1 s generado por time
+ 2355              		.loc 1 83 0
+ 2356 0158 14089FE5 		ldr	r0, .L72+48
+ 2357 015c FEFFFFEB 		bl	uart0_puts
+  84:../lab6.c     ****     timer3_start() ;
+ 2358              		.loc 1 84 0
+ 2359 0160 FEFFFFEB 		bl	timer3_start
+  85:../lab6.c     ****     timer0_open_ms( isr_timer0, 1000, TIMER_ONE_SHOT );
+ 2360              		.loc 1 85 0
+ 2361 0164 0C089FE5 		ldr	r0, .L72+52
+ 2362 0168 FA1FA0E3 		mov	r1, #1000
+ 2363 016c 0020A0E3 		mov	r2, #0
+ 2364 0170 FEFFFFEB 		bl	timer0_open_ms
+  86:../lab6.c     ****     flagTimer0 = FALSE;
+ 2365              		.loc 1 86 0
+ 2366 0174 00389FE5 		ldr	r3, .L72+56
+ 2367 0178 0020A0E3 		mov	r2, #0
+ 2368 017c 0020C3E5 		strb	r2, [r3, #0]
+  87:../lab6.c     ****     while( !flagTimer0 );
+ 2369              		.loc 1 87 0
+ 2370 0180 0000A0E1 		mov	r0, r0	@ nop
+ 2371              	.L5:
+ 2372              		.loc 1 87 0 is_stmt 0 discriminator 1
+ 2373 0184 F0379FE5 		ldr	r3, .L72+56
+ 2374 0188 0030D3E5 		ldrb	r3, [r3, #0]
+ 2375 018c FF3003E2 		and	r3, r3, #255
+ 2376 0190 000053E3 		cmp	r3, #0
+ 2377 0194 FAFFFF0A 		beq	.L5
+  88:../lab6.c     ****     ms = timer3_stop() / 10;
+ 2378              		.loc 1 88 0 is_stmt 1
+ 2379 0198 FEFFFFEB 		bl	timer3_stop
+ 2380 019c 0030A0E1 		mov	r3, r0
+ 2381 01a0 0320A0E1 		mov	r2, r3
+ 2382 01a4 B4379FE5 		ldr	r3, .L72+28
+ 2383 01a8 921383E0 		umull	r1, r3, r2, r3
+ 2384 01ac A331A0E1 		mov	r3, r3, lsr #3
+ 2385 01b0 B0314BE1 		strh	r3, [fp, #-16]	@ movhi
+  89:../lab6.c     ****     timer0_close();
+ 2386              		.loc 1 89 0
+ 2387 01b4 FEFFFFEB 		bl	timer0_close
+  90:../lab6.c     ****     uart0_puts( "    ... retardo medido: " );
+ 2388              		.loc 1 90 0
+ 2389 01b8 A4079FE5 		ldr	r0, .L72+32
+ 2390 01bc FEFFFFEB 		bl	uart0_puts
+  91:../lab6.c     ****     uart0_putint( ms );
+ 2391              		.loc 1 91 0
+ 2392 01c0 B0315BE1 		ldrh	r3, [fp, #-16]
+ 2393 01c4 0300A0E1 		mov	r0, r3
+ 2394 01c8 FEFFFFEB 		bl	uart0_putint
+  92:../lab6.c     ****     uart0_puts( " ms\n" );  
+ 2395              		.loc 1 92 0
+ 2396 01cc 94079FE5 		ldr	r0, .L72+36
+ 2397 01d0 FEFFFFEB 		bl	uart0_puts
+  93:../lab6.c     ****     
+  94:../lab6.c     ****     uart0_puts( "  - Medida con timer3_start() / timer3_stop() del retardo de 1 s generado por time
+ 2398              		.loc 1 94 0
+ 2399 01d4 A4079FE5 		ldr	r0, .L72+60
+ 2400 01d8 FEFFFFEB 		bl	uart0_puts
+  95:../lab6.c     ****     timer3_start() ;
+ 2401              		.loc 1 95 0
+ 2402 01dc FEFFFFEB 		bl	timer3_start
+  96:../lab6.c     ****     timer0_open_ms( isr_timer0, 10, TIMER_INTERVAL );
+ 2403              		.loc 1 96 0
+ 2404 01e0 90079FE5 		ldr	r0, .L72+52
+ 2405 01e4 0A10A0E3 		mov	r1, #10
+ 2406 01e8 0120A0E3 		mov	r2, #1
+ 2407 01ec FEFFFFEB 		bl	timer0_open_ms
+  97:../lab6.c     ****     flagTimer0 = FALSE;
+ 2408              		.loc 1 97 0
+ 2409 01f0 84379FE5 		ldr	r3, .L72+56
+ 2410 01f4 0020A0E3 		mov	r2, #0
+ 2411 01f8 0020C3E5 		strb	r2, [r3, #0]
+  98:../lab6.c     ****     ticks = 0;
+ 2412              		.loc 1 98 0
+ 2413 01fc 0030A0E3 		mov	r3, #0
+ 2414 0200 BE304BE1 		strh	r3, [fp, #-14]	@ movhi
+  99:../lab6.c     ****     while( ticks != 100 )
+ 2415              		.loc 1 99 0
+ 2416 0204 0B0000EA 		b	.L6
+ 2417              	.L66:
+ 100:../lab6.c     ****     {
+ 101:../lab6.c     ****         while( !flagTimer0 );
+ 2418              		.loc 1 101 0
+ 2419 0208 0000A0E1 		mov	r0, r0	@ nop
+ 2420              	.L7:
+ 2421              		.loc 1 101 0 is_stmt 0 discriminator 1
+ 2422 020c 68379FE5 		ldr	r3, .L72+56
+ 2423 0210 0030D3E5 		ldrb	r3, [r3, #0]
+ 2424 0214 FF3003E2 		and	r3, r3, #255
+ 2425 0218 000053E3 		cmp	r3, #0
+ 2426 021c FAFFFF0A 		beq	.L7
+ 102:../lab6.c     ****         flagTimer0 = FALSE;
+ 2427              		.loc 1 102 0 is_stmt 1
+ 2428 0220 54379FE5 		ldr	r3, .L72+56
+ 2429 0224 0020A0E3 		mov	r2, #0
+ 2430 0228 0020C3E5 		strb	r2, [r3, #0]
+ 103:../lab6.c     ****         ticks++;
+ 2431              		.loc 1 103 0
+ 2432 022c BE305BE1 		ldrh	r3, [fp, #-14]	@ movhi
+ 2433 0230 013083E2 		add	r3, r3, #1
+ 2434 0234 BE304BE1 		strh	r3, [fp, #-14]	@ movhi
+ 2435              	.L6:
+  99:../lab6.c     ****     while( ticks != 100 )
+ 2436              		.loc 1 99 0 discriminator 1
+ 2437 0238 BE305BE1 		ldrh	r3, [fp, #-14]
+ 2438 023c 640053E3 		cmp	r3, #100
+ 2439 0240 F0FFFF1A 		bne	.L66
+ 104:../lab6.c     ****     }
+ 105:../lab6.c     ****     ms = timer3_stop() / 10;
+ 2440              		.loc 1 105 0
+ 2441 0244 FEFFFFEB 		bl	timer3_stop
+ 2442 0248 0030A0E1 		mov	r3, r0
+ 2443 024c 0320A0E1 		mov	r2, r3
+ 2444 0250 08379FE5 		ldr	r3, .L72+28
+ 2445 0254 921383E0 		umull	r1, r3, r2, r3
+ 2446 0258 A331A0E1 		mov	r3, r3, lsr #3
+ 2447 025c B0314BE1 		strh	r3, [fp, #-16]	@ movhi
+ 106:../lab6.c     ****     timer0_close();
+ 2448              		.loc 1 106 0
+ 2449 0260 FEFFFFEB 		bl	timer0_close
+ 107:../lab6.c     ****     uart0_puts( "    ... retardo medido: " );
+ 2450              		.loc 1 107 0
+ 2451 0264 F8069FE5 		ldr	r0, .L72+32
+ 2452 0268 FEFFFFEB 		bl	uart0_puts
+ 108:../lab6.c     ****     uart0_putint( ms );
+ 2453              		.loc 1 108 0
+ 2454 026c B0315BE1 		ldrh	r3, [fp, #-16]
+ 2455 0270 0300A0E1 		mov	r0, r3
+ 2456 0274 FEFFFFEB 		bl	uart0_putint
+ 109:../lab6.c     ****     uart0_puts( " ms\n" ); 
+ 2457              		.loc 1 109 0
+ 2458 0278 E8069FE5 		ldr	r0, .L72+36
+ 2459 027c FEFFFFEB 		bl	uart0_puts
+ 110:../lab6.c     **** 
+ 111:../lab6.c     ****     uart0_puts( "  - Medida con timer3_start() / timer3_stop() del retardo de 1 s generado por time
+ 2460              		.loc 1 111 0
+ 2461 0280 FC069FE5 		ldr	r0, .L72+64
+ 2462 0284 FEFFFFEB 		bl	uart0_puts
+ 112:../lab6.c     ****     timer3_start() ;
+ 2463              		.loc 1 112 0
+ 2464 0288 FEFFFFEB 		bl	timer3_start
+ 113:../lab6.c     ****     timer0_open_tick( isr_timer0, 1 );
+ 2465              		.loc 1 113 0
+ 2466 028c E4069FE5 		ldr	r0, .L72+52
+ 2467 0290 0110A0E3 		mov	r1, #1
+ 2468 0294 FEFFFFEB 		bl	timer0_open_tick
+ 114:../lab6.c     ****     flagTimer0 = FALSE;
+ 2469              		.loc 1 114 0
+ 2470 0298 DC369FE5 		ldr	r3, .L72+56
+ 2471 029c 0020A0E3 		mov	r2, #0
+ 2472 02a0 0020C3E5 		strb	r2, [r3, #0]
+ 115:../lab6.c     ****     while( !flagTimer0 );
+ 2473              		.loc 1 115 0
+ 2474 02a4 0000A0E1 		mov	r0, r0	@ nop
+ 2475              	.L9:
+ 2476              		.loc 1 115 0 is_stmt 0 discriminator 1
+ 2477 02a8 CC369FE5 		ldr	r3, .L72+56
+ 2478 02ac 0030D3E5 		ldrb	r3, [r3, #0]
+ 2479 02b0 FF3003E2 		and	r3, r3, #255
+ 2480 02b4 000053E3 		cmp	r3, #0
+ 2481 02b8 FAFFFF0A 		beq	.L9
+ 116:../lab6.c     ****     ms = timer3_stop() / 10;
+ 2482              		.loc 1 116 0 is_stmt 1
+ 2483 02bc FEFFFFEB 		bl	timer3_stop
+ 2484 02c0 0030A0E1 		mov	r3, r0
+ 2485 02c4 0320A0E1 		mov	r2, r3
+ 2486 02c8 90369FE5 		ldr	r3, .L72+28
+ 2487 02cc 921383E0 		umull	r1, r3, r2, r3
+ 2488 02d0 A331A0E1 		mov	r3, r3, lsr #3
+ 2489 02d4 B0314BE1 		strh	r3, [fp, #-16]	@ movhi
+ 117:../lab6.c     ****     timer0_close();
+ 2490              		.loc 1 117 0
+ 2491 02d8 FEFFFFEB 		bl	timer0_close
+ 118:../lab6.c     ****     uart0_puts( "    ... retardo medido: " );
+ 2492              		.loc 1 118 0
+ 2493 02dc 80069FE5 		ldr	r0, .L72+32
+ 2494 02e0 FEFFFFEB 		bl	uart0_puts
+ 119:../lab6.c     ****     uart0_putint( ms );
+ 2495              		.loc 1 119 0
+ 2496 02e4 B0315BE1 		ldrh	r3, [fp, #-16]
+ 2497 02e8 0300A0E1 		mov	r0, r3
+ 2498 02ec FEFFFFEB 		bl	uart0_putint
+ 120:../lab6.c     ****     uart0_puts( " ms\n" ); 
+ 2499              		.loc 1 120 0
+ 2500 02f0 70069FE5 		ldr	r0, .L72+36
+ 2501 02f4 FEFFFFEB 		bl	uart0_puts
+ 121:../lab6.c     **** 
+ 122:../lab6.c     ****     uart0_puts( "  - Medida con timer3_start() / timer3_stop() del retardo de 1 s generado por time
+ 2502              		.loc 1 122 0
+ 2503 02f8 88069FE5 		ldr	r0, .L72+68
+ 2504 02fc FEFFFFEB 		bl	uart0_puts
+ 123:../lab6.c     ****     timer3_start() ;
+ 2505              		.loc 1 123 0
+ 2506 0300 FEFFFFEB 		bl	timer3_start
+ 124:../lab6.c     ****     timer0_open_tick( isr_timer0, 100 );
+ 2507              		.loc 1 124 0
+ 2508 0304 6C069FE5 		ldr	r0, .L72+52
+ 2509 0308 6410A0E3 		mov	r1, #100
+ 2510 030c FEFFFFEB 		bl	timer0_open_tick
+ 125:../lab6.c     ****     flagTimer0 = FALSE;
+ 2511              		.loc 1 125 0
+ 2512 0310 64369FE5 		ldr	r3, .L72+56
+ 2513 0314 0020A0E3 		mov	r2, #0
+ 2514 0318 0020C3E5 		strb	r2, [r3, #0]
+ 126:../lab6.c     ****     ticks = 0;
+ 2515              		.loc 1 126 0
+ 2516 031c 0030A0E3 		mov	r3, #0
+ 2517 0320 BE304BE1 		strh	r3, [fp, #-14]	@ movhi
+ 127:../lab6.c     ****     while( ticks != 100 )
+ 2518              		.loc 1 127 0
+ 2519 0324 0B0000EA 		b	.L10
+ 2520              	.L67:
+ 128:../lab6.c     ****     {
+ 129:../lab6.c     ****         while( !flagTimer0 );
+ 2521              		.loc 1 129 0
+ 2522 0328 0000A0E1 		mov	r0, r0	@ nop
+ 2523              	.L11:
+ 2524              		.loc 1 129 0 is_stmt 0 discriminator 1
+ 2525 032c 48369FE5 		ldr	r3, .L72+56
+ 2526 0330 0030D3E5 		ldrb	r3, [r3, #0]
+ 2527 0334 FF3003E2 		and	r3, r3, #255
+ 2528 0338 000053E3 		cmp	r3, #0
+ 2529 033c FAFFFF0A 		beq	.L11
+ 130:../lab6.c     ****         flagTimer0 = FALSE;
+ 2530              		.loc 1 130 0 is_stmt 1
+ 2531 0340 34369FE5 		ldr	r3, .L72+56
+ 2532 0344 0020A0E3 		mov	r2, #0
+ 2533 0348 0020C3E5 		strb	r2, [r3, #0]
+ 131:../lab6.c     ****         ticks++;
+ 2534              		.loc 1 131 0
+ 2535 034c BE305BE1 		ldrh	r3, [fp, #-14]	@ movhi
+ 2536 0350 013083E2 		add	r3, r3, #1
+ 2537 0354 BE304BE1 		strh	r3, [fp, #-14]	@ movhi
+ 2538              	.L10:
+ 127:../lab6.c     ****     while( ticks != 100 )
+ 2539              		.loc 1 127 0 discriminator 1
+ 2540 0358 BE305BE1 		ldrh	r3, [fp, #-14]
+ 2541 035c 640053E3 		cmp	r3, #100
+ 2542 0360 F0FFFF1A 		bne	.L67
+ 132:../lab6.c     ****     }
+ 133:../lab6.c     ****     ms = timer3_stop() / 10;
+ 2543              		.loc 1 133 0
+ 2544 0364 FEFFFFEB 		bl	timer3_stop
+ 2545 0368 0030A0E1 		mov	r3, r0
+ 2546 036c 0320A0E1 		mov	r2, r3
+ 2547 0370 E8359FE5 		ldr	r3, .L72+28
+ 2548 0374 921383E0 		umull	r1, r3, r2, r3
+ 2549 0378 A331A0E1 		mov	r3, r3, lsr #3
+ 2550 037c B0314BE1 		strh	r3, [fp, #-16]	@ movhi
+ 134:../lab6.c     ****     timer0_close();
+ 2551              		.loc 1 134 0
+ 2552 0380 FEFFFFEB 		bl	timer0_close
+ 135:../lab6.c     ****     uart0_puts( "    ... retardo medido: " );
+ 2553              		.loc 1 135 0
+ 2554 0384 D8059FE5 		ldr	r0, .L72+32
+ 2555 0388 FEFFFFEB 		bl	uart0_puts
+ 136:../lab6.c     ****     uart0_putint( ms );
+ 2556              		.loc 1 136 0
+ 2557 038c B0315BE1 		ldrh	r3, [fp, #-16]
+ 2558 0390 0300A0E1 		mov	r0, r3
+ 2559 0394 FEFFFFEB 		bl	uart0_putint
+ 137:../lab6.c     ****     uart0_puts( " ms\n" ); 
+ 2560              		.loc 1 137 0
+ 2561 0398 C8059FE5 		ldr	r0, .L72+36
+ 2562 039c FEFFFFEB 		bl	uart0_puts
+ 138:../lab6.c     ****     //
+ 139:../lab6.c     ****     uart0_puts( "  - Medida con timer3_start() / timer3_stop() del retardo de 1 s generado por time
+ 2563              		.loc 1 139 0
+ 2564 03a0 E4059FE5 		ldr	r0, .L72+72
+ 2565 03a4 FEFFFFEB 		bl	uart0_puts
+ 140:../lab6.c     ****        timer3_start() ;
+ 2566              		.loc 1 140 0
+ 2567 03a8 FEFFFFEB 		bl	timer3_start
+ 141:../lab6.c     ****        timer0_open_tick( isr_timer0, 1000 );
+ 2568              		.loc 1 141 0
+ 2569 03ac C4059FE5 		ldr	r0, .L72+52
+ 2570 03b0 FA1FA0E3 		mov	r1, #1000
+ 2571 03b4 FEFFFFEB 		bl	timer0_open_tick
+ 142:../lab6.c     ****        flagTimer0 = FALSE;
+ 2572              		.loc 1 142 0
+ 2573 03b8 BC359FE5 		ldr	r3, .L72+56
+ 2574 03bc 0020A0E3 		mov	r2, #0
+ 2575 03c0 0020C3E5 		strb	r2, [r3, #0]
+ 143:../lab6.c     ****        ticks = 0;
+ 2576              		.loc 1 143 0
+ 2577 03c4 0030A0E3 		mov	r3, #0
+ 2578 03c8 BE304BE1 		strh	r3, [fp, #-14]	@ movhi
+ 144:../lab6.c     ****        while( ticks != 1000 )
+ 2579              		.loc 1 144 0
+ 2580 03cc 0B0000EA 		b	.L13
+ 2581              	.L68:
+ 145:../lab6.c     ****        {
+ 146:../lab6.c     ****            while( !flagTimer0 );
+ 2582              		.loc 1 146 0
+ 2583 03d0 0000A0E1 		mov	r0, r0	@ nop
+ 2584              	.L14:
+ 2585              		.loc 1 146 0 is_stmt 0 discriminator 1
+ 2586 03d4 A0359FE5 		ldr	r3, .L72+56
+ 2587 03d8 0030D3E5 		ldrb	r3, [r3, #0]
+ 2588 03dc FF3003E2 		and	r3, r3, #255
+ 2589 03e0 000053E3 		cmp	r3, #0
+ 2590 03e4 FAFFFF0A 		beq	.L14
+ 147:../lab6.c     ****            flagTimer0 = FALSE;
+ 2591              		.loc 1 147 0 is_stmt 1
+ 2592 03e8 8C359FE5 		ldr	r3, .L72+56
+ 2593 03ec 0020A0E3 		mov	r2, #0
+ 2594 03f0 0020C3E5 		strb	r2, [r3, #0]
+ 148:../lab6.c     ****            ticks++;
+ 2595              		.loc 1 148 0
+ 2596 03f4 BE305BE1 		ldrh	r3, [fp, #-14]	@ movhi
+ 2597 03f8 013083E2 		add	r3, r3, #1
+ 2598 03fc BE304BE1 		strh	r3, [fp, #-14]	@ movhi
+ 2599              	.L13:
+ 144:../lab6.c     ****        while( ticks != 1000 )
+ 2600              		.loc 1 144 0 discriminator 1
+ 2601 0400 BE305BE1 		ldrh	r3, [fp, #-14]
+ 2602 0404 FA0F53E3 		cmp	r3, #1000
+ 2603 0408 F0FFFF1A 		bne	.L68
+ 149:../lab6.c     ****        }
+ 150:../lab6.c     ****        ms = timer3_stop() / 10;
+ 2604              		.loc 1 150 0
+ 2605 040c FEFFFFEB 		bl	timer3_stop
+ 2606 0410 0030A0E1 		mov	r3, r0
+ 2607 0414 0320A0E1 		mov	r2, r3
+ 2608 0418 40359FE5 		ldr	r3, .L72+28
+ 2609 041c 921383E0 		umull	r1, r3, r2, r3
+ 2610 0420 A331A0E1 		mov	r3, r3, lsr #3
+ 2611 0424 B0314BE1 		strh	r3, [fp, #-16]	@ movhi
+ 151:../lab6.c     ****        timer0_close();
+ 2612              		.loc 1 151 0
+ 2613 0428 FEFFFFEB 		bl	timer0_close
+ 152:../lab6.c     ****        uart0_puts( "    ... retardo medido: " );
+ 2614              		.loc 1 152 0
+ 2615 042c 30059FE5 		ldr	r0, .L72+32
+ 2616 0430 FEFFFFEB 		bl	uart0_puts
+ 153:../lab6.c     ****        uart0_putint( ms );
+ 2617              		.loc 1 153 0
+ 2618 0434 B0315BE1 		ldrh	r3, [fp, #-16]
+ 2619 0438 0300A0E1 		mov	r0, r3
+ 2620 043c FEFFFFEB 		bl	uart0_putint
+ 154:../lab6.c     ****        uart0_puts( " ms\n" );
+ 2621              		.loc 1 154 0
+ 2622 0440 20059FE5 		ldr	r0, .L72+36
+ 2623 0444 FEFFFFEB 		bl	uart0_puts
+ 155:../lab6.c     **** 
+ 156:../lab6.c     ****        uart0_puts( "  - Medida con timer3_start() / timer3_stop() del retardo de 1 s generado por t
+ 2624              		.loc 1 156 0
+ 2625 0448 40059FE5 		ldr	r0, .L72+76
+ 2626 044c FEFFFFEB 		bl	uart0_puts
+ 157:../lab6.c     ****           timer3_start() ;
+ 2627              		.loc 1 157 0
+ 2628 0450 FEFFFFEB 		bl	timer3_start
+ 158:../lab6.c     ****           timer0_open_tick( isr_timer0, 2000 );
+ 2629              		.loc 1 158 0
+ 2630 0454 1C059FE5 		ldr	r0, .L72+52
+ 2631 0458 7D1EA0E3 		mov	r1, #2000
+ 2632 045c FEFFFFEB 		bl	timer0_open_tick
+ 159:../lab6.c     ****           flagTimer0 = FALSE;
+ 2633              		.loc 1 159 0
+ 2634 0460 14359FE5 		ldr	r3, .L72+56
+ 2635 0464 0020A0E3 		mov	r2, #0
+ 2636 0468 0020C3E5 		strb	r2, [r3, #0]
+ 160:../lab6.c     ****           ticks = 0;
+ 2637              		.loc 1 160 0
+ 2638 046c 0030A0E3 		mov	r3, #0
+ 2639 0470 BE304BE1 		strh	r3, [fp, #-14]	@ movhi
+ 161:../lab6.c     ****           while( ticks != 2000 )
+ 2640              		.loc 1 161 0
+ 2641 0474 0B0000EA 		b	.L16
+ 2642              	.L69:
+ 162:../lab6.c     ****           {
+ 163:../lab6.c     ****               while( !flagTimer0 );
+ 2643              		.loc 1 163 0
+ 2644 0478 0000A0E1 		mov	r0, r0	@ nop
+ 2645              	.L17:
+ 2646              		.loc 1 163 0 is_stmt 0 discriminator 1
+ 2647 047c F8349FE5 		ldr	r3, .L72+56
+ 2648 0480 0030D3E5 		ldrb	r3, [r3, #0]
+ 2649 0484 FF3003E2 		and	r3, r3, #255
+ 2650 0488 000053E3 		cmp	r3, #0
+ 2651 048c FAFFFF0A 		beq	.L17
+ 164:../lab6.c     ****               flagTimer0 = FALSE;
+ 2652              		.loc 1 164 0 is_stmt 1
+ 2653 0490 E4349FE5 		ldr	r3, .L72+56
+ 2654 0494 0020A0E3 		mov	r2, #0
+ 2655 0498 0020C3E5 		strb	r2, [r3, #0]
+ 165:../lab6.c     ****               ticks++;
+ 2656              		.loc 1 165 0
+ 2657 049c BE305BE1 		ldrh	r3, [fp, #-14]	@ movhi
+ 2658 04a0 013083E2 		add	r3, r3, #1
+ 2659 04a4 BE304BE1 		strh	r3, [fp, #-14]	@ movhi
+ 2660              	.L16:
+ 161:../lab6.c     ****           while( ticks != 2000 )
+ 2661              		.loc 1 161 0 discriminator 1
+ 2662 04a8 BE305BE1 		ldrh	r3, [fp, #-14]
+ 2663 04ac 7D0E53E3 		cmp	r3, #2000
+ 2664 04b0 F0FFFF1A 		bne	.L69
+ 166:../lab6.c     ****           }
+ 167:../lab6.c     ****           ms = timer3_stop() / 10;
+ 2665              		.loc 1 167 0
+ 2666 04b4 FEFFFFEB 		bl	timer3_stop
+ 2667 04b8 0030A0E1 		mov	r3, r0
+ 2668 04bc 0320A0E1 		mov	r2, r3
+ 2669 04c0 98349FE5 		ldr	r3, .L72+28
+ 2670 04c4 921383E0 		umull	r1, r3, r2, r3
+ 2671 04c8 A331A0E1 		mov	r3, r3, lsr #3
+ 2672 04cc B0314BE1 		strh	r3, [fp, #-16]	@ movhi
+ 168:../lab6.c     ****           timer0_close();
+ 2673              		.loc 1 168 0
+ 2674 04d0 FEFFFFEB 		bl	timer0_close
+ 169:../lab6.c     ****           uart0_puts( "    ... retardo medido: " );
+ 2675              		.loc 1 169 0
+ 2676 04d4 88049FE5 		ldr	r0, .L72+32
+ 2677 04d8 FEFFFFEB 		bl	uart0_puts
+ 170:../lab6.c     ****           uart0_putint( ms );
+ 2678              		.loc 1 170 0
+ 2679 04dc B0315BE1 		ldrh	r3, [fp, #-16]
+ 2680 04e0 0300A0E1 		mov	r0, r3
+ 2681 04e4 FEFFFFEB 		bl	uart0_putint
+ 171:../lab6.c     ****           uart0_puts( " ms\n" );
+ 2682              		.loc 1 171 0
+ 2683 04e8 78049FE5 		ldr	r0, .L72+36
+ 2684 04ec FEFFFFEB 		bl	uart0_puts
+ 172:../lab6.c     ****     //
+ 173:../lab6.c     ****     uart0_puts( "  - Retardo hardware de 5 s usando timer3_delay_ms(): mídalo...\n" );
+ 2685              		.loc 1 173 0
+ 2686 04f0 9C049FE5 		ldr	r0, .L72+80
+ 2687 04f4 FEFFFFEB 		bl	uart0_puts
+ 174:../lab6.c     ****     timer3_delay_ms( 5000 );
+ 2688              		.loc 1 174 0
+ 2689 04f8 98049FE5 		ldr	r0, .L72+84
+ 2690 04fc FEFFFFEB 		bl	timer3_delay_ms
+ 175:../lab6.c     ****     uart0_puts( "    ... fin\n" );
+ 2691              		.loc 1 175 0
+ 2692 0500 94049FE5 		ldr	r0, .L72+88
+ 2693 0504 FEFFFFEB 		bl	uart0_puts
+ 176:../lab6.c     **** 
+ 177:../lab6.c     ****     uart0_puts( "  - Retardo hardware de 5 s usando timer3_delay_s(): mídalo...\n" );
+ 2694              		.loc 1 177 0
+ 2695 0508 90049FE5 		ldr	r0, .L72+92
+ 2696 050c FEFFFFEB 		bl	uart0_puts
+ 178:../lab6.c     ****     timer3_delay_s( 5 );    
+ 2697              		.loc 1 178 0
+ 2698 0510 0500A0E3 		mov	r0, #5
+ 2699 0514 FEFFFFEB 		bl	timer3_delay_s
+ 179:../lab6.c     ****     uart0_puts( "    ... fin\n" );
+ 2700              		.loc 1 179 0
+ 2701 0518 7C049FE5 		ldr	r0, .L72+88
+ 2702 051c FEFFFFEB 		bl	uart0_puts
+ 180:../lab6.c     **** 
+ 181:../lab6.c     ****     uart0_puts( "  - Retardo hardware de 5 s usando timer3_start_timeout(): mídalo...\n" );
+ 2703              		.loc 1 181 0
+ 2704 0520 7C049FE5 		ldr	r0, .L72+96
+ 2705 0524 FEFFFFEB 		bl	uart0_puts
+ 182:../lab6.c     ****     timer3_start_timeout( 50000 );
+ 2706              		.loc 1 182 0
+ 2707 0528 78049FE5 		ldr	r0, .L72+100
+ 2708 052c FEFFFFEB 		bl	timer3_start_timeout
+ 183:../lab6.c     ****     while( !timer3_timeout() );
+ 2709              		.loc 1 183 0
+ 2710 0530 0000A0E1 		mov	r0, r0	@ nop
+ 2711              	.L19:
+ 2712              		.loc 1 183 0 is_stmt 0 discriminator 1
+ 2713 0534 FEFFFFEB 		bl	timer3_timeout
+ 2714 0538 0030A0E1 		mov	r3, r0
+ 2715 053c 000053E3 		cmp	r3, #0
+ 2716 0540 FBFFFF0A 		beq	.L19
+ 184:../lab6.c     ****     uart0_puts( "    ... fin\n" );
+ 2717              		.loc 1 184 0 is_stmt 1
+ 2718 0544 50049FE5 		ldr	r0, .L72+88
+ 2719 0548 FEFFFFEB 		bl	uart0_puts
+ 185:../lab6.c     **** 
+ 186:../lab6.c     ****     /************************************/
+ 187:../lab6.c     ****     
+ 188:../lab6.c     ****     uart0_puts( "\n\n" );
+ 2720              		.loc 1 188 0
+ 2721 054c F0039FE5 		ldr	r0, .L72
+ 2722 0550 FEFFFFEB 		bl	uart0_puts
+ 189:../lab6.c     ****     uart0_puts( "TEST DE KEYPAD Y PBS\n" );
+ 2723              		.loc 1 189 0
+ 2724 0554 50049FE5 		ldr	r0, .L72+104
+ 2725 0558 FEFFFFEB 		bl	uart0_puts
+ 190:../lab6.c     ****     uart0_puts( "--------------------\n\n" );
+ 2726              		.loc 1 190 0
+ 2727 055c 4C049FE5 		ldr	r0, .L72+108
+ 2728 0560 FEFFFFEB 		bl	uart0_puts
+ 191:../lab6.c     ****     
+ 192:../lab6.c     ****     if( pb_pressed() )
+ 2729              		.loc 1 192 0
+ 2730 0564 FEFFFFEB 		bl	pb_pressed
+ 2731 0568 0030A0E1 		mov	r3, r0
+ 2732 056c 000053E3 		cmp	r3, #0
+ 2733 0570 0200000A 		beq	.L20
+ 193:../lab6.c     ****     {
+ 194:../lab6.c     ****         uart0_puts( "  - Error en la función pb_pressed()\n" );
+ 2734              		.loc 1 194 0
+ 2735 0574 38049FE5 		ldr	r0, .L72+112
+ 2736 0578 FEFFFFEB 		bl	uart0_puts
+ 2737              	.L21:
+ 195:../lab6.c     ****         while( 1 );
+ 2738              		.loc 1 195 0 discriminator 1
+ 2739 057c FEFFFFEA 		b	.L21
+ 2740              	.L20:
+ 196:../lab6.c     ****     }      
+ 197:../lab6.c     **** 
+ 198:../lab6.c     ****     if( keypad_pressed() )
+ 2741              		.loc 1 198 0
+ 2742 0580 FEFFFFEB 		bl	keypad_pressed
+ 2743 0584 0030A0E1 		mov	r3, r0
+ 2744 0588 000053E3 		cmp	r3, #0
+ 2745 058c 0200000A 		beq	.L22
+ 199:../lab6.c     ****     {
+ 200:../lab6.c     ****         uart0_puts( "  - Error en la función keypad_pressed()\n" );
+ 2746              		.loc 1 200 0
+ 2747 0590 20049FE5 		ldr	r0, .L72+116
+ 2748 0594 FEFFFFEB 		bl	uart0_puts
+ 2749              	.L23:
+ 201:../lab6.c     ****         while( 1 );
+ 2750              		.loc 1 201 0 discriminator 1
+ 2751 0598 FEFFFFEA 		b	.L23
+ 2752              	.L22:
+ 202:../lab6.c     ****     }      
+ 203:../lab6.c     **** 
+ 204:../lab6.c     ****     uart0_puts( "Lectura del keypad sin espera máxima usando keypad_getchar():\n" );
+ 2753              		.loc 1 204 0
+ 2754 059c 18049FE5 		ldr	r0, .L72+120
+ 2755 05a0 FEFFFFEB 		bl	uart0_puts
+ 205:../lab6.c     ****     ticks = 0;
+ 2756              		.loc 1 205 0
+ 2757 05a4 0030A0E3 		mov	r3, #0
+ 2758 05a8 BE304BE1 		strh	r3, [fp, #-14]	@ movhi
+ 206:../lab6.c     ****     while( ticks != 5 )
+ 2759              		.loc 1 206 0
+ 2760 05ac 130000EA 		b	.L24
+ 2761              	.L28:
+ 207:../lab6.c     ****     {
+ 208:../lab6.c     ****         switch( scancode = keypad_getchar() )
+ 2762              		.loc 1 208 0
+ 2763 05b0 FEFFFFEB 		bl	keypad_getchar
+ 2764 05b4 0030A0E1 		mov	r3, r0
+ 2765 05b8 11304BE5 		strb	r3, [fp, #-17]
+ 2766 05bc 11305BE5 		ldrb	r3, [fp, #-17]	@ zero_extendqisi2
+ 2767 05c0 FF0053E3 		cmp	r3, #255
+ 2768 05c4 0200001A 		bne	.L63
+ 2769              	.L26:
+ 209:../lab6.c     ****         {
+ 210:../lab6.c     ****             case KEYPAD_FAILURE:
+ 211:../lab6.c     ****                 uart0_puts( "  - Error de lectura\n" );
+ 2770              		.loc 1 211 0
+ 2771 05c8 F0039FE5 		ldr	r0, .L72+124
+ 2772 05cc FEFFFFEB 		bl	uart0_puts
+ 212:../lab6.c     ****                 break;
+ 2773              		.loc 1 212 0
+ 2774 05d0 070000EA 		b	.L27
+ 2775              	.L63:
+ 213:../lab6.c     ****             default:
+ 214:../lab6.c     ****                 uart0_puts( "  - La tecla 0x" );
+ 2776              		.loc 1 214 0
+ 2777 05d4 E8039FE5 		ldr	r0, .L72+128
+ 2778 05d8 FEFFFFEB 		bl	uart0_puts
+ 215:../lab6.c     ****                 uart0_puthex( scancode );
+ 2779              		.loc 1 215 0
+ 2780 05dc 11305BE5 		ldrb	r3, [fp, #-17]	@ zero_extendqisi2
+ 2781 05e0 0300A0E1 		mov	r0, r3
+ 2782 05e4 FEFFFFEB 		bl	uart0_puthex
+ 216:../lab6.c     ****                 uart0_puts( " ha sido presionada\n" );
+ 2783              		.loc 1 216 0
+ 2784 05e8 D8039FE5 		ldr	r0, .L72+132
+ 2785 05ec FEFFFFEB 		bl	uart0_puts
+ 217:../lab6.c     ****                 break;
+ 2786              		.loc 1 217 0
+ 2787 05f0 0000A0E1 		mov	r0, r0	@ nop
+ 2788              	.L27:
+ 218:../lab6.c     ****         }        
+ 219:../lab6.c     ****         ticks++;
+ 2789              		.loc 1 219 0
+ 2790 05f4 BE305BE1 		ldrh	r3, [fp, #-14]	@ movhi
+ 2791 05f8 013083E2 		add	r3, r3, #1
+ 2792 05fc BE304BE1 		strh	r3, [fp, #-14]	@ movhi
+ 2793              	.L24:
+ 206:../lab6.c     ****     while( ticks != 5 )
+ 2794              		.loc 1 206 0 discriminator 1
+ 2795 0600 BE305BE1 		ldrh	r3, [fp, #-14]
+ 2796 0604 050053E3 		cmp	r3, #5
+ 2797 0608 E8FFFF1A 		bne	.L28
+ 220:../lab6.c     ****     }    
+ 221:../lab6.c     ****           
+ 222:../lab6.c     ****     uart0_puts( "Lectura del keypad con espera máxima de 5 s usando keypad_timeout_getchar():\n" );
+ 2798              		.loc 1 222 0
+ 2799 060c B8039FE5 		ldr	r0, .L72+136
+ 2800 0610 FEFFFFEB 		bl	uart0_puts
+ 223:../lab6.c     ****     ticks = 0;
+ 2801              		.loc 1 223 0
+ 2802 0614 0030A0E3 		mov	r3, #0
+ 2803 0618 BE304BE1 		strh	r3, [fp, #-14]	@ movhi
+ 224:../lab6.c     ****     while( ticks != 5 )
+ 2804              		.loc 1 224 0
+ 2805 061c 190000EA 		b	.L29
+ 2806              	.L34:
+ 225:../lab6.c     ****     {
+ 226:../lab6.c     ****         switch( scancode = keypad_timeout_getchar( 5000 ) )
+ 2807              		.loc 1 226 0
+ 2808 0620 70039FE5 		ldr	r0, .L72+84
+ 2809 0624 FEFFFFEB 		bl	keypad_timeout_getchar
+ 2810 0628 0030A0E1 		mov	r3, r0
+ 2811 062c 11304BE5 		strb	r3, [fp, #-17]
+ 2812 0630 11305BE5 		ldrb	r3, [fp, #-17]	@ zero_extendqisi2
+ 2813 0634 FE0053E3 		cmp	r3, #254
+ 2814 0638 0400000A 		beq	.L31
+ 2815 063c FF0053E3 		cmp	r3, #255
+ 2816 0640 0500001A 		bne	.L64
+ 2817              	.L32:
+ 227:../lab6.c     ****         {
+ 228:../lab6.c     ****             case KEYPAD_FAILURE:
+ 229:../lab6.c     ****                 uart0_puts( "  - Error de lectura\n" );
+ 2818              		.loc 1 229 0
+ 2819 0644 74039FE5 		ldr	r0, .L72+124
+ 2820 0648 FEFFFFEB 		bl	uart0_puts
+ 230:../lab6.c     ****                 break;
+ 2821              		.loc 1 230 0
+ 2822 064c 0A0000EA 		b	.L33
+ 2823              	.L31:
+ 231:../lab6.c     ****             case KEYPAD_TIMEOUT:
+ 232:../lab6.c     ****                 uart0_puts( "  - Timeout\n" );
+ 2824              		.loc 1 232 0
+ 2825 0650 78039FE5 		ldr	r0, .L72+140
+ 2826 0654 FEFFFFEB 		bl	uart0_puts
+ 233:../lab6.c     ****                 break;
+ 2827              		.loc 1 233 0
+ 2828 0658 070000EA 		b	.L33
+ 2829              	.L64:
+ 234:../lab6.c     ****             default:
+ 235:../lab6.c     ****                 uart0_puts( "  - La tecla 0x" );
+ 2830              		.loc 1 235 0
+ 2831 065c 60039FE5 		ldr	r0, .L72+128
+ 2832 0660 FEFFFFEB 		bl	uart0_puts
+ 236:../lab6.c     ****                 uart0_puthex( scancode );
+ 2833              		.loc 1 236 0
+ 2834 0664 11305BE5 		ldrb	r3, [fp, #-17]	@ zero_extendqisi2
+ 2835 0668 0300A0E1 		mov	r0, r3
+ 2836 066c FEFFFFEB 		bl	uart0_puthex
+ 237:../lab6.c     ****                 uart0_puts( " ha sido presionada\n" );
+ 2837              		.loc 1 237 0
+ 2838 0670 50039FE5 		ldr	r0, .L72+132
+ 2839 0674 FEFFFFEB 		bl	uart0_puts
+ 238:../lab6.c     ****                 break;
+ 2840              		.loc 1 238 0
+ 2841 0678 0000A0E1 		mov	r0, r0	@ nop
+ 2842              	.L33:
+ 239:../lab6.c     ****         }          
+ 240:../lab6.c     ****         ticks++;
+ 2843              		.loc 1 240 0
+ 2844 067c BE305BE1 		ldrh	r3, [fp, #-14]	@ movhi
+ 2845 0680 013083E2 		add	r3, r3, #1
+ 2846 0684 BE304BE1 		strh	r3, [fp, #-14]	@ movhi
+ 2847              	.L29:
+ 224:../lab6.c     ****     while( ticks != 5 )
+ 2848              		.loc 1 224 0 discriminator 1
+ 2849 0688 BE305BE1 		ldrh	r3, [fp, #-14]
+ 2850 068c 050053E3 		cmp	r3, #5
+ 2851 0690 E2FFFF1A 		bne	.L34
+ 241:../lab6.c     ****     }     
+ 242:../lab6.c     ****     
+ 243:../lab6.c     ****     uart0_puts( "Lectura del keypad por interrupción usando keypad_getchartime():\n" );
+ 2852              		.loc 1 243 0
+ 2853 0694 38039FE5 		ldr	r0, .L72+144
+ 2854 0698 FEFFFFEB 		bl	uart0_puts
+ 244:../lab6.c     ****     keypad_open( isr_keypad );
+ 2855              		.loc 1 244 0
+ 2856 069c 34039FE5 		ldr	r0, .L72+148
+ 2857 06a0 FEFFFFEB 		bl	keypad_open
+ 245:../lab6.c     ****     flagKeypad = FALSE;
+ 2858              		.loc 1 245 0
+ 2859 06a4 30339FE5 		ldr	r3, .L72+152
+ 2860 06a8 0020A0E3 		mov	r2, #0
+ 2861 06ac 0020C3E5 		strb	r2, [r3, #0]
+ 246:../lab6.c     ****     ticks = 0;
+ 2862              		.loc 1 246 0
+ 2863 06b0 0030A0E3 		mov	r3, #0
+ 2864 06b4 BE304BE1 		strh	r3, [fp, #-14]	@ movhi
+ 247:../lab6.c     ****     while( ticks != 5 )
+ 2865              		.loc 1 247 0
+ 2866 06b8 220000EA 		b	.L35
+ 2867              	.L70:
+ 248:../lab6.c     ****     {
+ 249:../lab6.c     ****         while( !flagKeypad );
+ 2868              		.loc 1 249 0
+ 2869 06bc 0000A0E1 		mov	r0, r0	@ nop
+ 2870              	.L36:
+ 2871              		.loc 1 249 0 is_stmt 0 discriminator 1
+ 2872 06c0 14339FE5 		ldr	r3, .L72+152
+ 2873 06c4 0030D3E5 		ldrb	r3, [r3, #0]
+ 2874 06c8 FF3003E2 		and	r3, r3, #255
+ 2875 06cc 000053E3 		cmp	r3, #0
+ 2876 06d0 FAFFFF0A 		beq	.L36
+ 250:../lab6.c     ****         flagKeypad = FALSE;
+ 2877              		.loc 1 250 0 is_stmt 1
+ 2878 06d4 00339FE5 		ldr	r3, .L72+152
+ 2879 06d8 0020A0E3 		mov	r2, #0
+ 2880 06dc 0020C3E5 		strb	r2, [r3, #0]
+ 251:../lab6.c     ****         switch( scancode = keypad_getchartime( &time ) )
+ 2881              		.loc 1 251 0
+ 2882 06e0 14304BE2 		sub	r3, fp, #20
+ 2883 06e4 0300A0E1 		mov	r0, r3
+ 2884 06e8 FEFFFFEB 		bl	keypad_getchartime
+ 2885 06ec 0030A0E1 		mov	r3, r0
+ 2886 06f0 11304BE5 		strb	r3, [fp, #-17]
+ 2887 06f4 11305BE5 		ldrb	r3, [fp, #-17]	@ zero_extendqisi2
+ 2888 06f8 FF0053E3 		cmp	r3, #255
+ 2889 06fc 0200001A 		bne	.L65
+ 2890              	.L38:
+ 252:../lab6.c     ****         {
+ 253:../lab6.c     ****             case KEYPAD_FAILURE:
+ 254:../lab6.c     ****                 uart0_puts( "  - Error de lectura\n" );
+ 2891              		.loc 1 254 0
+ 2892 0700 B8029FE5 		ldr	r0, .L72+124
+ 2893 0704 FEFFFFEB 		bl	uart0_puts
+ 255:../lab6.c     ****                 break;
+ 2894              		.loc 1 255 0
+ 2895 0708 0B0000EA 		b	.L39
+ 2896              	.L65:
+ 256:../lab6.c     ****             default:
+ 257:../lab6.c     ****                 uart0_puts( "  - La tecla 0x" );
+ 2897              		.loc 1 257 0
+ 2898 070c B0029FE5 		ldr	r0, .L72+128
+ 2899 0710 FEFFFFEB 		bl	uart0_puts
+ 258:../lab6.c     ****                 uart0_puthex( scancode );
+ 2900              		.loc 1 258 0
+ 2901 0714 11305BE5 		ldrb	r3, [fp, #-17]	@ zero_extendqisi2
+ 2902 0718 0300A0E1 		mov	r0, r3
+ 2903 071c FEFFFFEB 		bl	uart0_puthex
+ 259:../lab6.c     ****                 uart0_puts( " ha sido presionada durante " );
+ 2904              		.loc 1 259 0
+ 2905 0720 B8029FE5 		ldr	r0, .L72+156
+ 2906 0724 FEFFFFEB 		bl	uart0_puts
+ 260:../lab6.c     ****                 uart0_putint( time );
+ 2907              		.loc 1 260 0
+ 2908 0728 B4315BE1 		ldrh	r3, [fp, #-20]
+ 2909 072c 0300A0E1 		mov	r0, r3
+ 2910 0730 FEFFFFEB 		bl	uart0_putint
+ 261:../lab6.c     ****                 uart0_puts( " ms \n" );                
+ 2911              		.loc 1 261 0
+ 2912 0734 A8029FE5 		ldr	r0, .L72+160
+ 2913 0738 FEFFFFEB 		bl	uart0_puts
+ 2914              	.L39:
+ 262:../lab6.c     ****         }        
+ 263:../lab6.c     ****         ticks++;
+ 2915              		.loc 1 263 0
+ 2916 073c BE305BE1 		ldrh	r3, [fp, #-14]	@ movhi
+ 2917 0740 013083E2 		add	r3, r3, #1
+ 2918 0744 BE304BE1 		strh	r3, [fp, #-14]	@ movhi
+ 2919              	.L35:
+ 247:../lab6.c     ****     while( ticks != 5 )
+ 2920              		.loc 1 247 0 discriminator 1
+ 2921 0748 BE305BE1 		ldrh	r3, [fp, #-14]
+ 2922 074c 050053E3 		cmp	r3, #5
+ 2923 0750 D9FFFF1A 		bne	.L70
+ 264:../lab6.c     ****     } 
+ 265:../lab6.c     ****     keypad_close();
+ 2924              		.loc 1 265 0
+ 2925 0754 FEFFFFEB 		bl	keypad_close
+ 266:../lab6.c     ****     
+ 267:../lab6.c     ****     uart0_puts( "Lectura de pulsadores sin espera máxima usando pb_getchar():\n" );
+ 2926              		.loc 1 267 0
+ 2927 0758 88029FE5 		ldr	r0, .L72+164
+ 2928 075c FEFFFFEB 		bl	uart0_puts
+ 268:../lab6.c     ****     ticks = 0;
+ 2929              		.loc 1 268 0
+ 2930 0760 0030A0E3 		mov	r3, #0
+ 2931 0764 BE304BE1 		strh	r3, [fp, #-14]	@ movhi
+ 269:../lab6.c     ****     while( ticks != 5 )
+ 2932              		.loc 1 269 0
+ 2933 0768 140000EA 		b	.L41
+ 2934              	.L46:
+ 270:../lab6.c     ****     {
+ 271:../lab6.c     ****         switch( pb_getchar() )
+ 2935              		.loc 1 271 0
+ 2936 076c FEFFFFEB 		bl	pb_getchar
+ 2937 0770 0030A0E1 		mov	r3, r0
+ 2938 0774 800053E3 		cmp	r3, #128
+ 2939 0778 0A00000A 		beq	.L44
+ 2940 077c FF0053E3 		cmp	r3, #255
+ 2941 0780 0200000A 		beq	.L45
+ 2942 0784 400053E3 		cmp	r3, #64
+ 2943 0788 0300000A 		beq	.L43
+ 2944 078c 080000EA 		b	.L42
+ 2945              	.L45:
+ 272:../lab6.c     ****         {
+ 273:../lab6.c     ****             case PB_FAILURE:
+ 274:../lab6.c     ****                 uart0_puts( "  - Error de lectura\n" );
+ 2946              		.loc 1 274 0
+ 2947 0790 28029FE5 		ldr	r0, .L72+124
+ 2948 0794 FEFFFFEB 		bl	uart0_puts
+ 275:../lab6.c     ****                 break;
+ 2949              		.loc 1 275 0
+ 2950 0798 050000EA 		b	.L42
+ 2951              	.L43:
+ 276:../lab6.c     ****             case PB_LEFT:
+ 277:../lab6.c     ****                 uart0_puts( "  - El pulsador izquierdo ha sido presionado\n" );
+ 2952              		.loc 1 277 0
+ 2953 079c 48029FE5 		ldr	r0, .L72+168
+ 2954 07a0 FEFFFFEB 		bl	uart0_puts
+ 278:../lab6.c     ****                 break;
+ 2955              		.loc 1 278 0
+ 2956 07a4 020000EA 		b	.L42
+ 2957              	.L44:
+ 279:../lab6.c     ****             case PB_RIGHT:
+ 280:../lab6.c     ****                 uart0_puts( "  - El pulsador derecho ha sido presionado\n" );
+ 2958              		.loc 1 280 0
+ 2959 07a8 40029FE5 		ldr	r0, .L72+172
+ 2960 07ac FEFFFFEB 		bl	uart0_puts
+ 281:../lab6.c     ****                 break;
+ 2961              		.loc 1 281 0
+ 2962 07b0 0000A0E1 		mov	r0, r0	@ nop
+ 2963              	.L42:
+ 282:../lab6.c     ****         }        
+ 283:../lab6.c     ****         ticks++;
+ 2964              		.loc 1 283 0
+ 2965 07b4 BE305BE1 		ldrh	r3, [fp, #-14]	@ movhi
+ 2966 07b8 013083E2 		add	r3, r3, #1
+ 2967 07bc BE304BE1 		strh	r3, [fp, #-14]	@ movhi
+ 2968              	.L41:
+ 269:../lab6.c     ****     while( ticks != 5 )
+ 2969              		.loc 1 269 0 discriminator 1
+ 2970 07c0 BE305BE1 		ldrh	r3, [fp, #-14]
+ 2971 07c4 050053E3 		cmp	r3, #5
+ 2972 07c8 E7FFFF1A 		bne	.L46
+ 284:../lab6.c     ****     }    
+ 285:../lab6.c     ****     
+ 286:../lab6.c     ****     uart0_puts( "Lectura de pulsadores con espera máxima de 5 s usando pb_timeout_getchar():\n" );
+ 2973              		.loc 1 286 0
+ 2974 07cc 20029FE5 		ldr	r0, .L72+176
+ 2975 07d0 FEFFFFEB 		bl	uart0_puts
+ 287:../lab6.c     ****     ticks = 0;
+ 2976              		.loc 1 287 0
+ 2977 07d4 0030A0E3 		mov	r3, #0
+ 2978 07d8 BE304BE1 		strh	r3, [fp, #-14]	@ movhi
+ 288:../lab6.c     ****     while( ticks != 5 )
+ 2979              		.loc 1 288 0
+ 2980 07dc 1C0000EA 		b	.L47
+ 2981              	.L54:
+ 289:../lab6.c     ****     {
+ 290:../lab6.c     ****         switch( pb_timeout_getchar( 5000 ) )
+ 2982              		.loc 1 290 0
+ 2983 07e0 B0019FE5 		ldr	r0, .L72+84
+ 2984 07e4 FEFFFFEB 		bl	pb_timeout_getchar
+ 2985 07e8 0030A0E1 		mov	r3, r0
+ 2986 07ec 800053E3 		cmp	r3, #128
+ 2987 07f0 1100000A 		beq	.L50
+ 2988 07f4 800053E3 		cmp	r3, #128
+ 2989 07f8 020000CA 		bgt	.L53
+ 2990 07fc 400053E3 		cmp	r3, #64
+ 2991 0800 0A00000A 		beq	.L49
+ 2992 0804 0F0000EA 		b	.L48
+ 2993              	.L53:
+ 2994 0808 FE0053E3 		cmp	r3, #254
+ 2995 080c 0400000A 		beq	.L51
+ 2996 0810 FF0053E3 		cmp	r3, #255
+ 2997 0814 0B00001A 		bne	.L48
+ 2998              	.L52:
+ 291:../lab6.c     ****         {
+ 292:../lab6.c     ****             case PB_FAILURE:
+ 293:../lab6.c     ****                 uart0_puts( "  - Error de lectura\n" );
+ 2999              		.loc 1 293 0
+ 3000 0818 A0019FE5 		ldr	r0, .L72+124
+ 3001 081c FEFFFFEB 		bl	uart0_puts
+ 294:../lab6.c     ****                 break;
+ 3002              		.loc 1 294 0
+ 3003 0820 080000EA 		b	.L48
+ 3004              	.L51:
+ 295:../lab6.c     ****             case PB_TIMEOUT:
+ 296:../lab6.c     ****                 uart0_puts( "  - Timeout\n" );
+ 3005              		.loc 1 296 0
+ 3006 0824 A4019FE5 		ldr	r0, .L72+140
+ 3007 0828 FEFFFFEB 		bl	uart0_puts
+ 297:../lab6.c     ****                 break;
+ 3008              		.loc 1 297 0
+ 3009 082c 050000EA 		b	.L48
+ 3010              	.L49:
+ 298:../lab6.c     ****             case PB_LEFT:
+ 299:../lab6.c     ****                 uart0_puts( "  - El pulsador izquierdo ha sido presionado\n" );
+ 3011              		.loc 1 299 0
+ 3012 0830 B4019FE5 		ldr	r0, .L72+168
+ 3013 0834 FEFFFFEB 		bl	uart0_puts
+ 300:../lab6.c     ****                 break;
+ 3014              		.loc 1 300 0
+ 3015 0838 020000EA 		b	.L48
+ 3016              	.L50:
+ 301:../lab6.c     ****             case PB_RIGHT:
+ 302:../lab6.c     ****                 uart0_puts( "  - El pulsador derecho ha sido presionado\n" );
+ 3017              		.loc 1 302 0
+ 3018 083c AC019FE5 		ldr	r0, .L72+172
+ 3019 0840 FEFFFFEB 		bl	uart0_puts
+ 303:../lab6.c     ****                 break;
+ 3020              		.loc 1 303 0
+ 3021 0844 0000A0E1 		mov	r0, r0	@ nop
+ 3022              	.L48:
+ 304:../lab6.c     ****         }          
+ 305:../lab6.c     ****         ticks++;
+ 3023              		.loc 1 305 0
+ 3024 0848 BE305BE1 		ldrh	r3, [fp, #-14]	@ movhi
+ 3025 084c 013083E2 		add	r3, r3, #1
+ 3026 0850 BE304BE1 		strh	r3, [fp, #-14]	@ movhi
+ 3027              	.L47:
+ 288:../lab6.c     ****     while( ticks != 5 )
+ 3028              		.loc 1 288 0 discriminator 1
+ 3029 0854 BE305BE1 		ldrh	r3, [fp, #-14]
+ 3030 0858 050053E3 		cmp	r3, #5
+ 3031 085c DFFFFF1A 		bne	.L54
+ 306:../lab6.c     ****     }     
+ 307:../lab6.c     ****        
+ 308:../lab6.c     ****     uart0_puts( "Lectura de pulsadores por interrupción usando pb_getchartime():\n" );
+ 3032              		.loc 1 308 0
+ 3033 0860 90019FE5 		ldr	r0, .L72+180
+ 3034 0864 FEFFFFEB 		bl	uart0_puts
+ 309:../lab6.c     ****     pbs_open( isr_pbs );
+ 3035              		.loc 1 309 0
+ 3036 0868 8C019FE5 		ldr	r0, .L72+184
+ 3037 086c FEFFFFEB 		bl	pbs_open
+ 310:../lab6.c     ****     flagPbs = FALSE;
+ 3038              		.loc 1 310 0
+ 3039 0870 88319FE5 		ldr	r3, .L72+188
+ 3040 0874 0020A0E3 		mov	r2, #0
+ 3041 0878 0020C3E5 		strb	r2, [r3, #0]
+ 311:../lab6.c     ****     ticks = 0;
+ 3042              		.loc 1 311 0
+ 3043 087c 0030A0E3 		mov	r3, #0
+ 3044 0880 BE304BE1 		strh	r3, [fp, #-14]	@ movhi
+ 312:../lab6.c     ****     while( ticks != 5 )
+ 3045              		.loc 1 312 0
+ 3046 0884 290000EA 		b	.L55
+ 3047              	.L71:
+ 313:../lab6.c     ****     {
+ 314:../lab6.c     ****         while( !flagKeypad );
+ 3048              		.loc 1 314 0
+ 3049 0888 0000A0E1 		mov	r0, r0	@ nop
+ 3050              	.L56:
+ 3051              		.loc 1 314 0 is_stmt 0 discriminator 1
+ 3052 088c 48319FE5 		ldr	r3, .L72+152
+ 3053 0890 0030D3E5 		ldrb	r3, [r3, #0]
+ 3054 0894 FF3003E2 		and	r3, r3, #255
+ 3055 0898 000053E3 		cmp	r3, #0
+ 3056 089c FAFFFF0A 		beq	.L56
+ 315:../lab6.c     ****         flagPbs = FALSE;
+ 3057              		.loc 1 315 0 is_stmt 1
+ 3058 08a0 58319FE5 		ldr	r3, .L72+188
+ 3059 08a4 0020A0E3 		mov	r2, #0
+ 3060 08a8 0020C3E5 		strb	r2, [r3, #0]
+ 316:../lab6.c     ****         switch( pb_getchartime( &time ) )
+ 3061              		.loc 1 316 0
+ 3062 08ac 14304BE2 		sub	r3, fp, #20
+ 3063 08b0 0300A0E1 		mov	r0, r3
+ 3064 08b4 FEFFFFEB 		bl	pb_getchartime
+ 3065 08b8 0030A0E1 		mov	r3, r0
+ 3066 08bc 800053E3 		cmp	r3, #128
+ 3067 08c0 0F00000A 		beq	.L59
+ 3068 08c4 FF0053E3 		cmp	r3, #255
+ 3069 08c8 0200000A 		beq	.L60
+ 3070 08cc 400053E3 		cmp	r3, #64
+ 3071 08d0 0300000A 		beq	.L58
+ 3072 08d4 120000EA 		b	.L57
+ 3073              	.L60:
+ 317:../lab6.c     ****         {
+ 318:../lab6.c     ****             case PB_FAILURE:
+ 319:../lab6.c     ****                 uart0_puts( "  - Error de lectura\n" );
+ 3074              		.loc 1 319 0
+ 3075 08d8 E0009FE5 		ldr	r0, .L72+124
+ 3076 08dc FEFFFFEB 		bl	uart0_puts
+ 320:../lab6.c     ****                 break;
+ 3077              		.loc 1 320 0
+ 3078 08e0 0F0000EA 		b	.L57
+ 3079              	.L58:
+ 321:../lab6.c     ****             case PB_LEFT:
+ 322:../lab6.c     ****                 uart0_puts( "  - El pulsador izquierdo ha sido presionado durante " );
+ 3080              		.loc 1 322 0
+ 3081 08e4 18019FE5 		ldr	r0, .L72+192
+ 3082 08e8 FEFFFFEB 		bl	uart0_puts
+ 323:../lab6.c     ****                 uart0_putint( time );
+ 3083              		.loc 1 323 0
+ 3084 08ec B4315BE1 		ldrh	r3, [fp, #-20]
+ 3085 08f0 0300A0E1 		mov	r0, r3
+ 3086 08f4 FEFFFFEB 		bl	uart0_putint
+ 324:../lab6.c     ****                 uart0_puts( " ms \n" );
+ 3087              		.loc 1 324 0
+ 3088 08f8 E4009FE5 		ldr	r0, .L72+160
+ 3089 08fc FEFFFFEB 		bl	uart0_puts
+ 325:../lab6.c     ****                 break;
+ 3090              		.loc 1 325 0
+ 3091 0900 070000EA 		b	.L57
+ 3092              	.L59:
+ 326:../lab6.c     ****             case PB_RIGHT:
+ 327:../lab6.c     ****                 uart0_puts( "  - El pulsador derecho ha sido presionado durante " );
+ 3093              		.loc 1 327 0
+ 3094 0904 FC009FE5 		ldr	r0, .L72+196
+ 3095 0908 FEFFFFEB 		bl	uart0_puts
+ 328:../lab6.c     ****                 uart0_putint( time );
+ 3096              		.loc 1 328 0
+ 3097 090c B4315BE1 		ldrh	r3, [fp, #-20]
+ 3098 0910 0300A0E1 		mov	r0, r3
+ 3099 0914 FEFFFFEB 		bl	uart0_putint
+ 329:../lab6.c     ****                 uart0_puts( " ms \n" );
+ 3100              		.loc 1 329 0
+ 3101 0918 C4009FE5 		ldr	r0, .L72+160
+ 3102 091c FEFFFFEB 		bl	uart0_puts
+ 330:../lab6.c     ****                 break;
+ 3103              		.loc 1 330 0
+ 3104 0920 0000A0E1 		mov	r0, r0	@ nop
+ 3105              	.L57:
+ 331:../lab6.c     **** 
+ 332:../lab6.c     ****         }       
+ 333:../lab6.c     ****         ticks++;
+ 3106              		.loc 1 333 0
+ 3107 0924 BE305BE1 		ldrh	r3, [fp, #-14]	@ movhi
+ 3108 0928 013083E2 		add	r3, r3, #1
+ 3109 092c BE304BE1 		strh	r3, [fp, #-14]	@ movhi
+ 3110              	.L55:
+ 312:../lab6.c     ****     while( ticks != 5 )
+ 3111              		.loc 1 312 0 discriminator 1
+ 3112 0930 BE305BE1 		ldrh	r3, [fp, #-14]
+ 3113 0934 050053E3 		cmp	r3, #5
+ 3114 0938 D2FFFF1A 		bne	.L71
+ 334:../lab6.c     ****     } 
+ 335:../lab6.c     ****     pbs_close();
+ 3115              		.loc 1 335 0
+ 3116 093c FEFFFFEB 		bl	pbs_close
+ 3117              	.L62:
+ 336:../lab6.c     ****     
+ 337:../lab6.c     ****     while( 1 );
+ 3118              		.loc 1 337 0 discriminator 1
+ 3119 0940 FEFFFFEA 		b	.L62
+ 3120              	.L73:
+ 3121              		.align	2
+ 3122              	.L72:
+ 3123 0944 00000000 		.word	.LC0
+ 3124 0948 04000000 		.word	.LC1
+ 3125 094c 1C000000 		.word	.LC2
+ 3126 0950 21800300 		.word	229409
+ 3127 0954 0800D801 		.word	30933000
+ 3128 0958 38000000 		.word	.LC3
+ 3129 095c 78000000 		.word	.LC4
+ 3130 0960 CDCCCCCC 		.word	-858993459
+ 3131 0964 EC000000 		.word	.LC5
+ 3132 0968 08010000 		.word	.LC6
+ 3133 096c 10010000 		.word	.LC7
+ 3134 0970 70010000 		.word	.LC8
+ 3135 0974 D0010000 		.word	.LC9
+ 3136 0978 00000000 		.word	isr_timer0
+ 3137 097c 00000000 		.word	flagTimer0
+ 3138 0980 4C020000 		.word	.LC10
+ 3139 0984 C8020000 		.word	.LC11
+ 3140 0988 38030000 		.word	.LC12
+ 3141 098c AC030000 		.word	.LC13
+ 3142 0990 20040000 		.word	.LC14
+ 3143 0994 94040000 		.word	.LC15
+ 3144 0998 88130000 		.word	5000
+ 3145 099c D8040000 		.word	.LC16
+ 3146 09a0 E8040000 		.word	.LC17
+ 3147 09a4 28050000 		.word	.LC18
+ 3148 09a8 50C30000 		.word	50000
+ 3149 09ac 70050000 		.word	.LC19
+ 3150 09b0 88050000 		.word	.LC20
+ 3151 09b4 A0050000 		.word	.LC21
+ 3152 09b8 C8050000 		.word	.LC22
+ 3153 09bc F4050000 		.word	.LC23
+ 3154 09c0 34060000 		.word	.LC24
+ 3155 09c4 4C060000 		.word	.LC25
+ 3156 09c8 5C060000 		.word	.LC26
+ 3157 09cc 74060000 		.word	.LC27
+ 3158 09d0 C4060000 		.word	.LC28
+ 3159 09d4 D4060000 		.word	.LC29
+ 3160 09d8 00000000 		.word	isr_keypad
+ 3161 09dc 00000000 		.word	flagKeypad
+ 3162 09e0 18070000 		.word	.LC30
+ 3163 09e4 38070000 		.word	.LC31
+ 3164 09e8 40070000 		.word	.LC32
+ 3165 09ec 80070000 		.word	.LC33
+ 3166 09f0 B0070000 		.word	.LC34
+ 3167 09f4 DC070000 		.word	.LC35
+ 3168 09f8 2C080000 		.word	.LC36
+ 3169 09fc 00000000 		.word	isr_pbs
+ 3170 0a00 00000000 		.word	flagPbs
+ 3171 0a04 70080000 		.word	.LC37
+ 3172 0a08 A8080000 		.word	.LC38
+ 3173              		.cfi_endproc
+ 3174              	.LFE0:
+ 3176              		.align	2
+ 3177              		.global	one_second_loop
+ 3179              	one_second_loop:
+ 3180              	.LFB1:
+ 338:../lab6.c     **** 
+ 339:../lab6.c     **** }
+ 340:../lab6.c     **** 
+ 341:../lab6.c     **** void one_second_loop( void )
+ 342:../lab6.c     **** {
+ 3181              		.loc 1 342 0
+ 3182              		.cfi_startproc
+ 3183              		@ Function supports interworking.
+ 3184              		@ args = 0, pretend = 0, frame = 8
+ 3185              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3186 0a0c 0DC0A0E1 		mov	ip, sp
+ 3187              	.LCFI2:
+ 3188              		.cfi_def_cfa_register 12
+ 3189 0a10 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 3190 0a14 04B04CE2 		sub	fp, ip, #4
+ 3191              		.cfi_offset 14, -8
+ 3192              		.cfi_offset 13, -12
+ 3193              		.cfi_offset 11, -16
+ 3194              	.LCFI3:
+ 3195              		.cfi_def_cfa 11, 4
+ 3196 0a18 08D04DE2 		sub	sp, sp, #8
+ 343:../lab6.c     ****     uint32 i;
+ 344:../lab6.c     **** 
+ 345:../lab6.c     ****     for( i=591436; i; i-- );
+ 3197              		.loc 1 345 0
+ 3198 0a1c 28309FE5 		ldr	r3, .L77
+ 3199 0a20 10300BE5 		str	r3, [fp, #-16]
+ 3200 0a24 020000EA 		b	.L75
+ 3201              	.L76:
+ 3202              		.loc 1 345 0 is_stmt 0 discriminator 2
+ 3203 0a28 10301BE5 		ldr	r3, [fp, #-16]
+ 3204 0a2c 013043E2 		sub	r3, r3, #1
+ 3205 0a30 10300BE5 		str	r3, [fp, #-16]
+ 3206              	.L75:
+ 3207              		.loc 1 345 0 discriminator 1
+ 3208 0a34 10301BE5 		ldr	r3, [fp, #-16]
+ 3209 0a38 000053E3 		cmp	r3, #0
+ 3210 0a3c F9FFFF1A 		bne	.L76
+ 346:../lab6.c     **** } 
+ 3211              		.loc 1 346 0 is_stmt 1
+ 3212 0a40 0CD04BE2 		sub	sp, fp, #12
+ 3213 0a44 00689DE8 		ldmfd	sp, {fp, sp, lr}
+ 3214 0a48 1EFF2FE1 		bx	lr
+ 3215              	.L78:
+ 3216              		.align	2
+ 3217              	.L77:
+ 3218 0a4c 4C060900 		.word	591436
+ 3219              		.cfi_endproc
+ 3220              	.LFE1:
+ 3222              		.align	2
+ 3223              		.global	isr_timer0
+ 3225              	isr_timer0:
+ 3226              	.LFB2:
+ 347:../lab6.c     **** 
+ 348:../lab6.c     **** void isr_timer0( void )
+ 349:../lab6.c     **** {
+ 3227              		.loc 1 349 0
+ 3228              		.cfi_startproc
+ 3229              		@ Interrupt Service Routine.
+ 3230              		@ args = 0, pretend = 0, frame = 0
+ 3231              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3232 0a50 04C02DE5 		str	ip, [sp, #-4]!
+ 3233 0a54 0DC0A0E1 		mov	ip, sp
+ 3234              	.LCFI4:
+ 3235              		.cfi_def_cfa_register 12
+ 3236 0a58 0CD82DE9 		stmfd	sp!, {r2, r3, fp, ip, lr, pc}
+ 3237 0a5c 04B04CE2 		sub	fp, ip, #4
+ 3238              		.cfi_offset 14, -8
+ 3239              		.cfi_offset 13, -12
+ 3240              		.cfi_offset 11, -16
+ 3241              		.cfi_offset 3, -20
+ 3242              		.cfi_offset 2, -24
+ 3243              	.LCFI5:
+ 3244              		.cfi_def_cfa 11, 4
+ 350:../lab6.c     ****     flagTimer0 = TRUE;
+ 3245              		.loc 1 350 0
+ 3246 0a60 20309FE5 		ldr	r3, .L80
+ 3247 0a64 0120A0E3 		mov	r2, #1
+ 3248 0a68 0020C3E5 		strb	r2, [r3, #0]
+ 351:../lab6.c     ****     I_ISPC = BIT_TIMER0;
+ 3249              		.loc 1 351 0
+ 3250 0a6c 18309FE5 		ldr	r3, .L80+4
+ 3251 0a70 022AA0E3 		mov	r2, #8192
+ 3252 0a74 002083E5 		str	r2, [r3, #0]
+ 352:../lab6.c     **** }
+ 3253              		.loc 1 352 0
+ 3254 0a78 14D04BE2 		sub	sp, fp, #20
+ 3255 0a7c 0C689DE8 		ldmfd	sp, {r2, r3, fp, sp, lr}
+ 3256 0a80 04C09DE4 		ldmfd	sp!, {ip}
+ 3257 0a84 04F05EE2 		subs	pc, lr, #4
+ 3258              	.L81:
+ 3259              		.align	2
+ 3260              	.L80:
+ 3261 0a88 00000000 		.word	flagTimer0
+ 3262 0a8c 2400E001 		.word	31457316
+ 3263              		.cfi_endproc
+ 3264              	.LFE2:
+ 3266              		.align	2
+ 3267              		.global	isr_keypad
+ 3269              	isr_keypad:
+ 3270              	.LFB3:
+ 353:../lab6.c     **** 
+ 354:../lab6.c     **** void isr_keypad( void )
+ 355:../lab6.c     **** {
+ 3271              		.loc 1 355 0
+ 3272              		.cfi_startproc
+ 3273              		@ Interrupt Service Routine.
+ 3274              		@ args = 0, pretend = 0, frame = 0
+ 3275              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3276 0a90 04C02DE5 		str	ip, [sp, #-4]!
+ 3277 0a94 0DC0A0E1 		mov	ip, sp
+ 3278              	.LCFI6:
+ 3279              		.cfi_def_cfa_register 12
+ 3280 0a98 0CD82DE9 		stmfd	sp!, {r2, r3, fp, ip, lr, pc}
+ 3281 0a9c 04B04CE2 		sub	fp, ip, #4
+ 3282              		.cfi_offset 14, -8
+ 3283              		.cfi_offset 13, -12
+ 3284              		.cfi_offset 11, -16
+ 3285              		.cfi_offset 3, -20
+ 3286              		.cfi_offset 2, -24
+ 3287              	.LCFI7:
+ 3288              		.cfi_def_cfa 11, 4
+ 356:../lab6.c     ****     flagKeypad = TRUE;
+ 3289              		.loc 1 356 0
+ 3290 0aa0 20309FE5 		ldr	r3, .L83
+ 3291 0aa4 0120A0E3 		mov	r2, #1
+ 3292 0aa8 0020C3E5 		strb	r2, [r3, #0]
+ 357:../lab6.c     ****     I_ISPC = BIT_KEYPAD;
+ 3293              		.loc 1 357 0
+ 3294 0aac 18309FE5 		ldr	r3, .L83+4
+ 3295 0ab0 0124A0E3 		mov	r2, #16777216
+ 3296 0ab4 002083E5 		str	r2, [r3, #0]
+ 358:../lab6.c     **** }
+ 3297              		.loc 1 358 0
+ 3298 0ab8 14D04BE2 		sub	sp, fp, #20
+ 3299 0abc 0C689DE8 		ldmfd	sp, {r2, r3, fp, sp, lr}
+ 3300 0ac0 04C09DE4 		ldmfd	sp!, {ip}
+ 3301 0ac4 04F05EE2 		subs	pc, lr, #4
+ 3302              	.L84:
+ 3303              		.align	2
+ 3304              	.L83:
+ 3305 0ac8 00000000 		.word	flagKeypad
+ 3306 0acc 2400E001 		.word	31457316
+ 3307              		.cfi_endproc
+ 3308              	.LFE3:
+ 3310              		.align	2
+ 3311              		.global	isr_pbs
+ 3313              	isr_pbs:
+ 3314              	.LFB4:
+ 359:../lab6.c     **** 
+ 360:../lab6.c     **** void isr_pbs( void )
+ 361:../lab6.c     **** {
+ 3315              		.loc 1 361 0
+ 3316              		.cfi_startproc
+ 3317              		@ Interrupt Service Routine.
+ 3318              		@ args = 0, pretend = 0, frame = 0
+ 3319              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3320 0ad0 04C02DE5 		str	ip, [sp, #-4]!
+ 3321 0ad4 0DC0A0E1 		mov	ip, sp
+ 3322              	.LCFI8:
+ 3323              		.cfi_def_cfa_register 12
+ 3324 0ad8 0FD82DE9 		stmfd	sp!, {r0, r1, r2, r3, fp, ip, lr, pc}
+ 3325 0adc 04B04CE2 		sub	fp, ip, #4
+ 3326              		.cfi_offset 14, -8
+ 3327              		.cfi_offset 13, -12
+ 3328              		.cfi_offset 11, -16
+ 3329              		.cfi_offset 3, -20
+ 3330              		.cfi_offset 2, -24
+ 3331              		.cfi_offset 1, -28
+ 3332              		.cfi_offset 0, -32
+ 3333              	.LCFI9:
+ 3334              		.cfi_def_cfa 11, 4
+ 362:../lab6.c     ****     switch( pb_scan() )
+ 3335              		.loc 1 362 0
+ 3336 0ae0 FEFFFFEB 		bl	pb_scan
+ 3337 0ae4 0030A0E1 		mov	r3, r0
+ 3338 0ae8 800053E3 		cmp	r3, #128
+ 3339 0aec 0C00000A 		beq	.L88
+ 3340 0af0 FF0053E3 		cmp	r3, #255
+ 3341 0af4 0200000A 		beq	.L89
+ 3342 0af8 400053E3 		cmp	r3, #64
+ 3343 0afc 0400000A 		beq	.L87
+ 3344 0b00 0B0000EA 		b	.L86
+ 3345              	.L89:
+ 363:../lab6.c     ****     {
+ 364:../lab6.c     ****         case PB_FAILURE:
+ 365:../lab6.c     ****             EXTINTPND = BIT_LEFTPB | BIT_RIGHTPB;   
+ 3346              		.loc 1 365 0
+ 3347 0b04 50309FE5 		ldr	r3, .L90
+ 3348 0b08 0C20A0E3 		mov	r2, #12
+ 3349 0b0c 002083E5 		str	r2, [r3, #0]
+ 366:../lab6.c     ****             break;
+ 3350              		.loc 1 366 0
+ 3351 0b10 070000EA 		b	.L86
+ 3352              	.L87:
+ 367:../lab6.c     ****         case PB_LEFT:
+ 368:../lab6.c     ****             EXTINTPND = BIT_LEFTPB;   
+ 3353              		.loc 1 368 0
+ 3354 0b14 40309FE5 		ldr	r3, .L90
+ 3355 0b18 0420A0E3 		mov	r2, #4
+ 3356 0b1c 002083E5 		str	r2, [r3, #0]
+ 369:../lab6.c     ****             break;
+ 3357              		.loc 1 369 0
+ 3358 0b20 030000EA 		b	.L86
+ 3359              	.L88:
+ 370:../lab6.c     ****         case PB_RIGHT:
+ 371:../lab6.c     ****             EXTINTPND = BIT_RIGHTPB;   
+ 3360              		.loc 1 371 0
+ 3361 0b24 30309FE5 		ldr	r3, .L90
+ 3362 0b28 0820A0E3 		mov	r2, #8
+ 3363 0b2c 002083E5 		str	r2, [r3, #0]
+ 372:../lab6.c     ****             break;
+ 3364              		.loc 1 372 0
+ 3365 0b30 0000A0E1 		mov	r0, r0	@ nop
+ 3366              	.L86:
+ 373:../lab6.c     ****     }
+ 374:../lab6.c     ****     flagPbs = TRUE;
+ 3367              		.loc 1 374 0
+ 3368 0b34 24309FE5 		ldr	r3, .L90+4
+ 3369 0b38 0120A0E3 		mov	r2, #1
+ 3370 0b3c 0020C3E5 		strb	r2, [r3, #0]
+ 375:../lab6.c     ****     I_ISPC = BIT_PB;
+ 3371              		.loc 1 375 0
+ 3372 0b40 1C309FE5 		ldr	r3, .L90+8
+ 3373 0b44 0226A0E3 		mov	r2, #2097152
+ 3374 0b48 002083E5 		str	r2, [r3, #0]
+ 376:../lab6.c     **** }
+ 3375              		.loc 1 376 0
+ 3376 0b4c 1CD04BE2 		sub	sp, fp, #28
+ 3377 0b50 0F689DE8 		ldmfd	sp, {r0, r1, r2, r3, fp, sp, lr}
+ 3378 0b54 04C09DE4 		ldmfd	sp!, {ip}
+ 3379 0b58 04F05EE2 		subs	pc, lr, #4
+ 3380              	.L91:
+ 3381              		.align	2
+ 3382              	.L90:
+ 3383 0b5c 5400D201 		.word	30539860
+ 3384 0b60 00000000 		.word	flagPbs
+ 3385 0b64 2400E001 		.word	31457316
+ 3386              		.cfi_endproc
+ 3387              	.LFE4:
+ 3389              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 lab6.c
+                            *COM*:00000001 flagTimer0
+                            *COM*:00000001 flagKeypad
+                            *COM*:00000001 flagPbs
+C:\Users\javie\AppData\Local\Temp\ccaADMks.s:2070   .rodata:00000000 $d
+C:\Users\javie\AppData\Local\Temp\ccaADMks.s:2216   .text:00000000 $a
+C:\Users\javie\AppData\Local\Temp\ccaADMks.s:2219   .text:00000000 main
+C:\Users\javie\AppData\Local\Temp\ccaADMks.s:3179   .text:00000a0c one_second_loop
+C:\Users\javie\AppData\Local\Temp\ccaADMks.s:3123   .text:00000944 $d
+C:\Users\javie\AppData\Local\Temp\ccaADMks.s:3225   .text:00000a50 isr_timer0
+C:\Users\javie\AppData\Local\Temp\ccaADMks.s:3269   .text:00000a90 isr_keypad
+C:\Users\javie\AppData\Local\Temp\ccaADMks.s:3313   .text:00000ad0 isr_pbs
+C:\Users\javie\AppData\Local\Temp\ccaADMks.s:3176   .text:00000a0c $a
+C:\Users\javie\AppData\Local\Temp\ccaADMks.s:3218   .text:00000a4c $d
+C:\Users\javie\AppData\Local\Temp\ccaADMks.s:3222   .text:00000a50 $a
+C:\Users\javie\AppData\Local\Temp\ccaADMks.s:3261   .text:00000a88 $d
+C:\Users\javie\AppData\Local\Temp\ccaADMks.s:3266   .text:00000a90 $a
+C:\Users\javie\AppData\Local\Temp\ccaADMks.s:3305   .text:00000ac8 $d
+C:\Users\javie\AppData\Local\Temp\ccaADMks.s:3310   .text:00000ad0 $a
+C:\Users\javie\AppData\Local\Temp\ccaADMks.s:3383   .text:00000b5c $d
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+sys_init
+uart0_init
+timers_init
+keypad_init
+pbs_init
+uart0_puts
+timer3_start
+timer3_stop
+uart0_putint
+sw_delay_ms
+sw_delay_s
+timer0_open_ms
+timer0_close
+timer0_open_tick
+timer3_delay_ms
+timer3_delay_s
+timer3_start_timeout
+timer3_timeout
+pb_pressed
+keypad_pressed
+keypad_getchar
+uart0_puthex
+keypad_timeout_getchar
+keypad_open
+keypad_getchartime
+keypad_close
+pb_getchar
+pb_timeout_getchar
+pbs_open
+pb_getchartime
+pbs_close
+pb_scan

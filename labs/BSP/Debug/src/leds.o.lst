@@ -1,0 +1,280 @@
+   1              		.cpu arm7tdmi
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 6
+  10              		.eabi_attribute 18, 4
+  11              		.file	"leds.c"
+  21              	.Ltext0:
+  22              		.file 1 "../src/leds.c"
+ 1688              		.align	2
+ 1689              		.global	leds_init
+ 1691              	leds_init:
+ 1692              	.LFB0:
+   1:../src/leds.c **** #include <s3c44b0x.h>
+   2:../src/leds.c **** #include <leds.h>
+   3:../src/leds.c **** 
+   4:../src/leds.c **** void leds_init( void )
+   5:../src/leds.c **** {
+ 1693              		.loc 1 5 0
+ 1694              		.cfi_startproc
+ 1695              		@ Function supports interworking.
+ 1696              		@ args = 0, pretend = 0, frame = 0
+ 1697              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1698 0000 0DC0A0E1 		mov	ip, sp
+ 1699              	.LCFI0:
+ 1700              		.cfi_def_cfa_register 12
+ 1701 0004 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 1702 0008 04B04CE2 		sub	fp, ip, #4
+ 1703              		.cfi_offset 14, -8
+ 1704              		.cfi_offset 13, -12
+ 1705              		.cfi_offset 11, -16
+ 1706              	.LCFI1:
+ 1707              		.cfi_def_cfa 11, 4
+   6:../src/leds.c ****     led_off(LEFT_LED);
+ 1708              		.loc 1 6 0
+ 1709 000c 0100A0E3 		mov	r0, #1
+ 1710 0010 FEFFFFEB 		bl	led_off
+   7:../src/leds.c ****     led_off(RIGHT_LED);
+ 1711              		.loc 1 7 0
+ 1712 0014 0200A0E3 		mov	r0, #2
+ 1713 0018 FEFFFFEB 		bl	led_off
+   8:../src/leds.c **** }
+ 1714              		.loc 1 8 0
+ 1715 001c 0CD04BE2 		sub	sp, fp, #12
+ 1716 0020 00689DE8 		ldmfd	sp, {fp, sp, lr}
+ 1717 0024 1EFF2FE1 		bx	lr
+ 1718              		.cfi_endproc
+ 1719              	.LFE0:
+ 1721              		.align	2
+ 1722              		.global	led_on
+ 1724              	led_on:
+ 1725              	.LFB1:
+   9:../src/leds.c **** 
+  10:../src/leds.c **** void led_on( uint8 led )
+  11:../src/leds.c **** {
+ 1726              		.loc 1 11 0
+ 1727              		.cfi_startproc
+ 1728              		@ Function supports interworking.
+ 1729              		@ args = 0, pretend = 0, frame = 8
+ 1730              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1731 0028 0DC0A0E1 		mov	ip, sp
+ 1732              	.LCFI2:
+ 1733              		.cfi_def_cfa_register 12
+ 1734 002c 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 1735 0030 04B04CE2 		sub	fp, ip, #4
+ 1736              		.cfi_offset 14, -8
+ 1737              		.cfi_offset 13, -12
+ 1738              		.cfi_offset 11, -16
+ 1739              	.LCFI3:
+ 1740              		.cfi_def_cfa 11, 4
+ 1741 0034 08D04DE2 		sub	sp, sp, #8
+ 1742 0038 0030A0E1 		mov	r3, r0
+ 1743 003c 0D304BE5 		strb	r3, [fp, #-13]
+  12:../src/leds.c **** 	PDATB &=~(led<<9);
+ 1744              		.loc 1 12 0
+ 1745 0040 24309FE5 		ldr	r3, .L3
+ 1746 0044 20209FE5 		ldr	r2, .L3
+ 1747 0048 001092E5 		ldr	r1, [r2, #0]
+ 1748 004c 0D205BE5 		ldrb	r2, [fp, #-13]	@ zero_extendqisi2
+ 1749 0050 8224A0E1 		mov	r2, r2, asl #9
+ 1750 0054 0220E0E1 		mvn	r2, r2
+ 1751 0058 022001E0 		and	r2, r1, r2
+ 1752 005c 002083E5 		str	r2, [r3, #0]
+  13:../src/leds.c **** }
+ 1753              		.loc 1 13 0
+ 1754 0060 0CD04BE2 		sub	sp, fp, #12
+ 1755 0064 00689DE8 		ldmfd	sp, {fp, sp, lr}
+ 1756 0068 1EFF2FE1 		bx	lr
+ 1757              	.L4:
+ 1758              		.align	2
+ 1759              	.L3:
+ 1760 006c 0C00D201 		.word	30539788
+ 1761              		.cfi_endproc
+ 1762              	.LFE1:
+ 1764              		.align	2
+ 1765              		.global	led_off
+ 1767              	led_off:
+ 1768              	.LFB2:
+  14:../src/leds.c **** 
+  15:../src/leds.c **** void led_off( uint8 led )
+  16:../src/leds.c **** {
+ 1769              		.loc 1 16 0
+ 1770              		.cfi_startproc
+ 1771              		@ Function supports interworking.
+ 1772              		@ args = 0, pretend = 0, frame = 8
+ 1773              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1774 0070 0DC0A0E1 		mov	ip, sp
+ 1775              	.LCFI4:
+ 1776              		.cfi_def_cfa_register 12
+ 1777 0074 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 1778 0078 04B04CE2 		sub	fp, ip, #4
+ 1779              		.cfi_offset 14, -8
+ 1780              		.cfi_offset 13, -12
+ 1781              		.cfi_offset 11, -16
+ 1782              	.LCFI5:
+ 1783              		.cfi_def_cfa 11, 4
+ 1784 007c 08D04DE2 		sub	sp, sp, #8
+ 1785 0080 0030A0E1 		mov	r3, r0
+ 1786 0084 0D304BE5 		strb	r3, [fp, #-13]
+  17:../src/leds.c **** 	PDATB |= led<<9;
+ 1787              		.loc 1 17 0
+ 1788 0088 20309FE5 		ldr	r3, .L6
+ 1789 008c 1C209FE5 		ldr	r2, .L6
+ 1790 0090 001092E5 		ldr	r1, [r2, #0]
+ 1791 0094 0D205BE5 		ldrb	r2, [fp, #-13]	@ zero_extendqisi2
+ 1792 0098 8224A0E1 		mov	r2, r2, asl #9
+ 1793 009c 022081E1 		orr	r2, r1, r2
+ 1794 00a0 002083E5 		str	r2, [r3, #0]
+  18:../src/leds.c **** }
+ 1795              		.loc 1 18 0
+ 1796 00a4 0CD04BE2 		sub	sp, fp, #12
+ 1797 00a8 00689DE8 		ldmfd	sp, {fp, sp, lr}
+ 1798 00ac 1EFF2FE1 		bx	lr
+ 1799              	.L7:
+ 1800              		.align	2
+ 1801              	.L6:
+ 1802 00b0 0C00D201 		.word	30539788
+ 1803              		.cfi_endproc
+ 1804              	.LFE2:
+ 1806              		.align	2
+ 1807              		.global	led_toggle
+ 1809              	led_toggle:
+ 1810              	.LFB3:
+  19:../src/leds.c **** 
+  20:../src/leds.c **** void led_toggle( uint8 led )
+  21:../src/leds.c **** {
+ 1811              		.loc 1 21 0
+ 1812              		.cfi_startproc
+ 1813              		@ Function supports interworking.
+ 1814              		@ args = 0, pretend = 0, frame = 16
+ 1815              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1816 00b4 0DC0A0E1 		mov	ip, sp
+ 1817              	.LCFI6:
+ 1818              		.cfi_def_cfa_register 12
+ 1819 00b8 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 1820 00bc 04B04CE2 		sub	fp, ip, #4
+ 1821              		.cfi_offset 14, -8
+ 1822              		.cfi_offset 13, -12
+ 1823              		.cfi_offset 11, -16
+ 1824              	.LCFI7:
+ 1825              		.cfi_def_cfa 11, 4
+ 1826 00c0 10D04DE2 		sub	sp, sp, #16
+ 1827 00c4 0030A0E1 		mov	r3, r0
+ 1828 00c8 15304BE5 		strb	r3, [fp, #-21]
+  22:../src/leds.c ****     uint8 st = led_status(led);
+ 1829              		.loc 1 22 0
+ 1830 00cc 15305BE5 		ldrb	r3, [fp, #-21]	@ zero_extendqisi2
+ 1831 00d0 0300A0E1 		mov	r0, r3
+ 1832 00d4 FEFFFFEB 		bl	led_status
+ 1833 00d8 0030A0E1 		mov	r3, r0
+ 1834 00dc 0D304BE5 		strb	r3, [fp, #-13]
+  23:../src/leds.c ****     if(st == 0){
+ 1835              		.loc 1 23 0
+ 1836 00e0 0D305BE5 		ldrb	r3, [fp, #-13]	@ zero_extendqisi2
+ 1837 00e4 000053E3 		cmp	r3, #0
+ 1838 00e8 0300001A 		bne	.L9
+  24:../src/leds.c ****     	led_on(led);
+ 1839              		.loc 1 24 0
+ 1840 00ec 15305BE5 		ldrb	r3, [fp, #-21]	@ zero_extendqisi2
+ 1841 00f0 0300A0E1 		mov	r0, r3
+ 1842 00f4 FEFFFFEB 		bl	led_on
+ 1843 00f8 020000EA 		b	.L8
+ 1844              	.L9:
+  25:../src/leds.c ****     }
+  26:../src/leds.c ****     else{
+  27:../src/leds.c ****     	led_off(led);
+ 1845              		.loc 1 27 0
+ 1846 00fc 15305BE5 		ldrb	r3, [fp, #-21]	@ zero_extendqisi2
+ 1847 0100 0300A0E1 		mov	r0, r3
+ 1848 0104 FEFFFFEB 		bl	led_off
+ 1849              	.L8:
+  28:../src/leds.c ****     }
+  29:../src/leds.c **** }
+ 1850              		.loc 1 29 0
+ 1851 0108 0CD04BE2 		sub	sp, fp, #12
+ 1852 010c 00689DE8 		ldmfd	sp, {fp, sp, lr}
+ 1853 0110 1EFF2FE1 		bx	lr
+ 1854              		.cfi_endproc
+ 1855              	.LFE3:
+ 1857              		.align	2
+ 1858              		.global	led_status
+ 1860              	led_status:
+ 1861              	.LFB4:
+  30:../src/leds.c **** 
+  31:../src/leds.c **** uint8 led_status( uint8 led )
+  32:../src/leds.c **** {
+ 1862              		.loc 1 32 0
+ 1863              		.cfi_startproc
+ 1864              		@ Function supports interworking.
+ 1865              		@ args = 0, pretend = 0, frame = 8
+ 1866              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1867 0114 0DC0A0E1 		mov	ip, sp
+ 1868              	.LCFI8:
+ 1869              		.cfi_def_cfa_register 12
+ 1870 0118 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 1871 011c 04B04CE2 		sub	fp, ip, #4
+ 1872              		.cfi_offset 14, -8
+ 1873              		.cfi_offset 13, -12
+ 1874              		.cfi_offset 11, -16
+ 1875              	.LCFI9:
+ 1876              		.cfi_def_cfa 11, 4
+ 1877 0120 08D04DE2 		sub	sp, sp, #8
+ 1878 0124 0030A0E1 		mov	r3, r0
+ 1879 0128 0D304BE5 		strb	r3, [fp, #-13]
+  33:../src/leds.c **** 	if(PDATB&(1<<led+8)){
+ 1880              		.loc 1 33 0
+ 1881 012c 38309FE5 		ldr	r3, .L14
+ 1882 0130 002093E5 		ldr	r2, [r3, #0]
+ 1883 0134 0D305BE5 		ldrb	r3, [fp, #-13]	@ zero_extendqisi2
+ 1884 0138 083083E2 		add	r3, r3, #8
+ 1885 013c 0110A0E3 		mov	r1, #1
+ 1886 0140 1133A0E1 		mov	r3, r1, asl r3
+ 1887 0144 033002E0 		and	r3, r2, r3
+ 1888 0148 000053E3 		cmp	r3, #0
+ 1889 014c 0100000A 		beq	.L12
+  34:../src/leds.c **** 		return 0;
+ 1890              		.loc 1 34 0
+ 1891 0150 0030A0E3 		mov	r3, #0
+ 1892 0154 000000EA 		b	.L13
+ 1893              	.L12:
+  35:../src/leds.c **** 	}
+  36:../src/leds.c **** 	else{
+  37:../src/leds.c **** 		return 1;
+ 1894              		.loc 1 37 0
+ 1895 0158 0130A0E3 		mov	r3, #1
+ 1896              	.L13:
+  38:../src/leds.c **** 	}
+  39:../src/leds.c **** }
+ 1897              		.loc 1 39 0
+ 1898 015c 0300A0E1 		mov	r0, r3
+ 1899 0160 0CD04BE2 		sub	sp, fp, #12
+ 1900 0164 00689DE8 		ldmfd	sp, {fp, sp, lr}
+ 1901 0168 1EFF2FE1 		bx	lr
+ 1902              	.L15:
+ 1903              		.align	2
+ 1904              	.L14:
+ 1905 016c 0C00D201 		.word	30539788
+ 1906              		.cfi_endproc
+ 1907              	.LFE4:
+ 1909              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 leds.c
+C:\Users\javie\AppData\Local\Temp\ccLlxYK1.s:1688   .text:00000000 $a
+C:\Users\javie\AppData\Local\Temp\ccLlxYK1.s:1691   .text:00000000 leds_init
+C:\Users\javie\AppData\Local\Temp\ccLlxYK1.s:1767   .text:00000070 led_off
+C:\Users\javie\AppData\Local\Temp\ccLlxYK1.s:1724   .text:00000028 led_on
+C:\Users\javie\AppData\Local\Temp\ccLlxYK1.s:1760   .text:0000006c $d
+C:\Users\javie\AppData\Local\Temp\ccLlxYK1.s:1764   .text:00000070 $a
+C:\Users\javie\AppData\Local\Temp\ccLlxYK1.s:1802   .text:000000b0 $d
+C:\Users\javie\AppData\Local\Temp\ccLlxYK1.s:1806   .text:000000b4 $a
+C:\Users\javie\AppData\Local\Temp\ccLlxYK1.s:1809   .text:000000b4 led_toggle
+C:\Users\javie\AppData\Local\Temp\ccLlxYK1.s:1860   .text:00000114 led_status
+C:\Users\javie\AppData\Local\Temp\ccLlxYK1.s:1905   .text:0000016c $d
+                     .debug_frame:00000010 $d
+
+NO UNDEFINED SYMBOLS

@@ -1,0 +1,126 @@
+#include <s3c44b0x.h>
+#include <uart.h>
+
+void uart0_init( void )
+{
+UFCON0 = 0x1;
+UMCON0 = 0x0;
+ULCON0 = 0x3;
+UBRDIV0 = 0x22;
+UCON0 = 0x5;
+}
+
+void uart0_putchar( char ch )
+{
+    while(UFSTAT0 & (1<<9));
+    UTXH0 = (UTXH0<<8) | ch;
+
+}        
+
+char uart0_getchar( void )
+{//AZPIRICUETOS
+    while(!(UFSTAT0 & 0xf));
+    return URXH0;
+}
+
+void uart0_puts( char *s )
+{
+	int i = 0;
+	while(s[i] != '\0'){
+		uart0_putchar(s[i]);
+		i++;
+	}
+
+}
+
+void uart0_putint( int32 i )
+{
+    char buf[10 + 1 + 1];
+	char *p = buf+11;
+	uint8 signo;//0 es negativo
+	uint8 c;
+	*p = '\0';
+
+	if(i<0){
+		signo = 0;
+		i *= -1;
+	}
+	else{
+		signo = 1;
+	}
+
+	do{
+		c = i%10;
+		i = i/10;
+		*--p= c + '0';
+	}while(i);
+
+	if(!signo){
+		*--p= '-';
+	}
+
+	uart0_puts(p);
+}
+
+void uart0_puthex( uint32 i )
+{
+    char buf[8 + 1];
+    char *p = buf + 8;
+    uint8 c;
+
+    *p = '\0';
+
+    do {
+        c = i & 0xf;
+        if( c < 10 )
+            *--p = '0' + c;
+        else
+            *--p = 'a' + c - 10;
+        i = i >> 4;
+    } while( i );
+
+    uart0_puts( p );
+}
+
+void uart0_gets( char *s )
+{
+
+	char c = uart0_getchar();
+	while(c != '\n'){
+		*s++ = c;
+		c =  uart0_getchar();
+	}
+	*s = '\0';
+}
+
+int32 uart0_getint( void )
+{
+	int32 sol = 0, signo = 1;
+	char x = uart0_getchar();
+	if(x == '-'){
+		signo = -1;
+		x = uart0_getchar();
+	}
+	while(x != '\n'){
+		sol *= 10;
+		int32 aux = x - '0';
+		sol += aux;
+		x = uart0_getchar();
+	}
+	return sol*signo;
+}
+
+uint32 uart0_gethex( void )
+{//no estoy completamente seguro
+	uint32 sol = 0;
+	char x = uart0_getchar();
+	while(x != '\n'){
+		int32 aux = x;
+		if(x >= 65){ aux -= 'A'; aux += 10; }
+		else{ aux -= '0';}
+		sol += aux;
+		sol *= 16;
+		x = uart0_getchar();
+	}
+	return sol;
+}

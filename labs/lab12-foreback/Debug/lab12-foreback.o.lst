@@ -1,0 +1,1747 @@
+   1              		.cpu arm7tdmi
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 6
+  10              		.eabi_attribute 18, 4
+  11              		.file	"lab12-foreback.c"
+  21              	.Ltext0:
+  22              		.file 1 "../lab12-foreback.c"
+ 2142              		.align	2
+ 2143              	.LC0:
+ 2144 0000 0A0A2045 		.ascii	"\012\012 Ejecutando una aplicaci\363n foreground/ba"
+ 2144      6A656375 
+ 2144      74616E64 
+ 2144      6F20756E 
+ 2144      61206170 
+ 2145 002a 636B6772 		.ascii	"ckground\012\000"
+ 2145      6F756E64 
+ 2145      0A00
+ 2146              		.align	2
+ 2147              	.LC1:
+ 2148 0034 202D2D2D 		.ascii	" -----------------------------------------------\012"
+ 2148      2D2D2D2D 
+ 2148      2D2D2D2D 
+ 2148      2D2D2D2D 
+ 2148      2D2D2D2D 
+ 2149 0065 0A00     		.ascii	"\012\000"
+ 2150              		.text
+ 2151              		.align	2
+ 2152              		.global	main
+ 2154              	main:
+ 2155              	.LFB0:
+   1:../lab12-foreback.c **** /*-------------------------------------------------------------------
+   2:../lab12-foreback.c **** **
+   3:../lab12-foreback.c **** **  Fichero:
+   4:../lab12-foreback.c **** **    lab12-foreback.c  14/1/2021
+   5:../lab12-foreback.c **** **
+   6:../lab12-foreback.c **** **    (c) J.M. Mendias
+   7:../lab12-foreback.c **** **    Programación de Sistemas y Dispositivos
+   8:../lab12-foreback.c **** **    Facultad de Informática. Universidad Complutense de Madrid
+   9:../lab12-foreback.c **** **
+  10:../lab12-foreback.c **** **  Propósito:
+  11:../lab12-foreback.c **** **    Ejemplo de una aplicación guiada por tiempo con arquitectura
+  12:../lab12-foreback.c **** **    foreground/background
+  13:../lab12-foreback.c **** **
+  14:../lab12-foreback.c **** **  Notas de diseño:
+  15:../lab12-foreback.c **** **
+  16:../lab12-foreback.c **** **-----------------------------------------------------------------*/
+  17:../lab12-foreback.c **** 
+  18:../lab12-foreback.c **** #include <s3c44b0x.h>
+  19:../lab12-foreback.c **** #include <s3cev40.h>
+  20:../lab12-foreback.c **** #include <common_types.h>
+  21:../lab12-foreback.c **** #include <system.h>
+  22:../lab12-foreback.c **** #include <leds.h>
+  23:../lab12-foreback.c **** #include <segs.h>
+  24:../lab12-foreback.c **** #include <uart.h>
+  25:../lab12-foreback.c **** #include <pbs.h>
+  26:../lab12-foreback.c **** #include <keypad.h>
+  27:../lab12-foreback.c **** #include <timers.h>
+  28:../lab12-foreback.c **** #include <rtc.h>
+  29:../lab12-foreback.c **** #include <lcd.h>
+  30:../lab12-foreback.c **** 
+  31:../lab12-foreback.c **** #define TICKS_PER_SEC   (100)
+  32:../lab12-foreback.c **** 
+  33:../lab12-foreback.c **** /* Declaración de recursos */
+  34:../lab12-foreback.c **** 
+  35:../lab12-foreback.c **** uint8 scancode;
+  36:../lab12-foreback.c **** boolean flagTask5;
+  37:../lab12-foreback.c **** boolean flagTask6;
+  38:../lab12-foreback.c **** boolean flagTask8;
+  39:../lab12-foreback.c **** boolean flagTask9;
+  40:../lab12-foreback.c **** 
+  41:../lab12-foreback.c **** volatile boolean flagPb;
+  42:../lab12-foreback.c **** volatile boolean flagToggleLeds;
+  43:../lab12-foreback.c **** volatile boolean flagReadKeypad;
+  44:../lab12-foreback.c **** volatile boolean flagWriteRTC;
+  45:../lab12-foreback.c **** volatile boolean flagWriteTicks;
+  46:../lab12-foreback.c **** 
+  47:../lab12-foreback.c **** /* Declaración de tareas */
+  48:../lab12-foreback.c **** 
+  49:../lab12-foreback.c **** void Task1( void );
+  50:../lab12-foreback.c **** void Task2( void );
+  51:../lab12-foreback.c **** void Task3( void );
+  52:../lab12-foreback.c **** void Task4( void );
+  53:../lab12-foreback.c **** void Task5( void );
+  54:../lab12-foreback.c **** void Task6( void );
+  55:../lab12-foreback.c **** void Task7( void );
+  56:../lab12-foreback.c **** void Task8( void );
+  57:../lab12-foreback.c **** void Task9( void );
+  58:../lab12-foreback.c **** 
+  59:../lab12-foreback.c **** /* Declaración de RTI */
+  60:../lab12-foreback.c **** 
+  61:../lab12-foreback.c **** void isr_pb( void ) __attribute__ ((interrupt ("IRQ")));
+  62:../lab12-foreback.c **** void isr_tick( void ) __attribute__ ((interrupt ("IRQ")));
+  63:../lab12-foreback.c **** 
+  64:../lab12-foreback.c **** /*******************************************************************/
+  65:../lab12-foreback.c **** 
+  66:../lab12-foreback.c **** void main( void )
+  67:../lab12-foreback.c **** {
+ 2156              		.loc 1 67 0
+ 2157              		.cfi_startproc
+ 2158              		@ Function supports interworking.
+ 2159              		@ args = 0, pretend = 0, frame = 0
+ 2160              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2161 0000 0DC0A0E1 		mov	ip, sp
+ 2162              	.LCFI0:
+ 2163              		.cfi_def_cfa_register 12
+ 2164 0004 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 2165 0008 04B04CE2 		sub	fp, ip, #4
+ 2166              		.cfi_offset 14, -8
+ 2167              		.cfi_offset 13, -12
+ 2168              		.cfi_offset 11, -16
+ 2169              	.LCFI1:
+ 2170              		.cfi_def_cfa 11, 4
+  68:../lab12-foreback.c ****     sys_init();      /* Inicializa el sistema */
+ 2171              		.loc 1 68 0
+ 2172 000c FEFFFFEB 		bl	sys_init
+  69:../lab12-foreback.c ****     timers_init();
+ 2173              		.loc 1 69 0
+ 2174 0010 FEFFFFEB 		bl	timers_init
+  70:../lab12-foreback.c ****     uart0_init();
+ 2175              		.loc 1 70 0
+ 2176 0014 FEFFFFEB 		bl	uart0_init
+  71:../lab12-foreback.c ****     leds_init();
+ 2177              		.loc 1 71 0
+ 2178 0018 FEFFFFEB 		bl	leds_init
+  72:../lab12-foreback.c ****     segs_init();
+ 2179              		.loc 1 72 0
+ 2180 001c FEFFFFEB 		bl	segs_init
+  73:../lab12-foreback.c ****     rtc_init();
+ 2181              		.loc 1 73 0
+ 2182 0020 FEFFFFEB 		bl	rtc_init
+  74:../lab12-foreback.c ****     pbs_init();
+ 2183              		.loc 1 74 0
+ 2184 0024 FEFFFFEB 		bl	pbs_init
+  75:../lab12-foreback.c ****     keypad_init();
+ 2185              		.loc 1 75 0
+ 2186 0028 FEFFFFEB 		bl	keypad_init
+  76:../lab12-foreback.c ****     lcd_init();
+ 2187              		.loc 1 76 0
+ 2188 002c FEFFFFEB 		bl	lcd_init
+  77:../lab12-foreback.c **** 
+  78:../lab12-foreback.c ****     uart0_puts( "\n\n Ejecutando una aplicación foreground/background\n" );
+ 2189              		.loc 1 78 0
+ 2190 0030 F8019FE5 		ldr	r0, .L13
+ 2191 0034 FEFFFFEB 		bl	uart0_puts
+  79:../lab12-foreback.c ****     uart0_puts( " -----------------------------------------------\n\n" ) ;
+ 2192              		.loc 1 79 0
+ 2193 0038 F4019FE5 		ldr	r0, .L13+4
+ 2194 003c FEFFFFEB 		bl	uart0_puts
+  80:../lab12-foreback.c ****     
+  81:../lab12-foreback.c ****     flagTask5      = FALSE;    /* Inicializa flags */
+ 2195              		.loc 1 81 0
+ 2196 0040 F0319FE5 		ldr	r3, .L13+8
+ 2197 0044 0020A0E3 		mov	r2, #0
+ 2198 0048 0020C3E5 		strb	r2, [r3, #0]
+  82:../lab12-foreback.c ****     flagTask6      = FALSE;
+ 2199              		.loc 1 82 0
+ 2200 004c E8319FE5 		ldr	r3, .L13+12
+ 2201 0050 0020A0E3 		mov	r2, #0
+ 2202 0054 0020C3E5 		strb	r2, [r3, #0]
+  83:../lab12-foreback.c ****     flagPb         = FALSE;
+ 2203              		.loc 1 83 0
+ 2204 0058 E0319FE5 		ldr	r3, .L13+16
+ 2205 005c 0020A0E3 		mov	r2, #0
+ 2206 0060 0020C3E5 		strb	r2, [r3, #0]
+  84:../lab12-foreback.c ****     flagToggleLeds = FALSE;
+ 2207              		.loc 1 84 0
+ 2208 0064 D8319FE5 		ldr	r3, .L13+20
+ 2209 0068 0020A0E3 		mov	r2, #0
+ 2210 006c 0020C3E5 		strb	r2, [r3, #0]
+  85:../lab12-foreback.c ****     flagReadKeypad = FALSE;
+ 2211              		.loc 1 85 0
+ 2212 0070 D0319FE5 		ldr	r3, .L13+24
+ 2213 0074 0020A0E3 		mov	r2, #0
+ 2214 0078 0020C3E5 		strb	r2, [r3, #0]
+  86:../lab12-foreback.c ****     flagWriteRTC   = FALSE;
+ 2215              		.loc 1 86 0
+ 2216 007c C8319FE5 		ldr	r3, .L13+28
+ 2217 0080 0020A0E3 		mov	r2, #0
+ 2218 0084 0020C3E5 		strb	r2, [r3, #0]
+  87:../lab12-foreback.c ****     flagWriteTicks = FALSE;
+ 2219              		.loc 1 87 0
+ 2220 0088 C0319FE5 		ldr	r3, .L13+32
+ 2221 008c 0020A0E3 		mov	r2, #0
+ 2222 0090 0020C3E5 		strb	r2, [r3, #0]
+  88:../lab12-foreback.c ****     flagTask8	   = FALSE;
+ 2223              		.loc 1 88 0
+ 2224 0094 B8319FE5 		ldr	r3, .L13+36
+ 2225 0098 0020A0E3 		mov	r2, #0
+ 2226 009c 0020C3E5 		strb	r2, [r3, #0]
+  89:../lab12-foreback.c ****     flagTask9	   = FALSE;
+ 2227              		.loc 1 89 0
+ 2228 00a0 B0319FE5 		ldr	r3, .L13+40
+ 2229 00a4 0020A0E3 		mov	r2, #0
+ 2230 00a8 0020C3E5 		strb	r2, [r3, #0]
+  90:../lab12-foreback.c **** 
+  91:../lab12-foreback.c ****     Task1();    /* Ejecuta por primera vez a las funciones para inicializarlas */
+ 2231              		.loc 1 91 0
+ 2232 00ac FEFFFFEB 		bl	Task1
+  92:../lab12-foreback.c ****     Task2();
+ 2233              		.loc 1 92 0
+ 2234 00b0 FEFFFFEB 		bl	Task2
+  93:../lab12-foreback.c ****     Task3();
+ 2235              		.loc 1 93 0
+ 2236 00b4 FEFFFFEB 		bl	Task3
+  94:../lab12-foreback.c ****     Task4();
+ 2237              		.loc 1 94 0
+ 2238 00b8 FEFFFFEB 		bl	Task4
+  95:../lab12-foreback.c ****     Task5();
+ 2239              		.loc 1 95 0
+ 2240 00bc FEFFFFEB 		bl	Task5
+  96:../lab12-foreback.c ****     Task6();
+ 2241              		.loc 1 96 0
+ 2242 00c0 FEFFFFEB 		bl	Task6
+  97:../lab12-foreback.c ****     Task7();
+ 2243              		.loc 1 97 0
+ 2244 00c4 FEFFFFEB 		bl	Task7
+  98:../lab12-foreback.c ****     Task8();
+ 2245              		.loc 1 98 0
+ 2246 00c8 FEFFFFEB 		bl	Task8
+  99:../lab12-foreback.c ****     Task9();
+ 2247              		.loc 1 99 0
+ 2248 00cc FEFFFFEB 		bl	Task9
+ 100:../lab12-foreback.c **** 
+ 101:../lab12-foreback.c ****     lcd_on();
+ 2249              		.loc 1 101 0
+ 2250 00d0 FEFFFFEB 		bl	lcd_on
+ 102:../lab12-foreback.c ****     lcd_clear();
+ 2251              		.loc 1 102 0
+ 2252 00d4 FEFFFFEB 		bl	lcd_clear
+ 103:../lab12-foreback.c ****    
+ 104:../lab12-foreback.c ****     pbs_open( isr_pb );                           /* Instala isr_pbs como RTI por presión de pulsad
+ 2253              		.loc 1 104 0
+ 2254 00d8 7C019FE5 		ldr	r0, .L13+44
+ 2255 00dc FEFFFFEB 		bl	pbs_open
+ 105:../lab12-foreback.c ****     timer0_open_tick( isr_tick, TICKS_PER_SEC );  /* Instala isr_tick como RTI del timer0  */
+ 2256              		.loc 1 105 0
+ 2257 00e0 78019FE5 		ldr	r0, .L13+48
+ 2258 00e4 6410A0E3 		mov	r1, #100
+ 2259 00e8 FEFFFFEB 		bl	timer0_open_tick
+ 2260 00ec 000000EA 		b	.L11
+ 2261              	.L12:
+ 106:../lab12-foreback.c ****         
+ 107:../lab12-foreback.c ****     while( 1 )
+ 108:../lab12-foreback.c ****     {
+ 109:../lab12-foreback.c ****         sleep();                        /* Entra en estado IDLE, sale por interrupción */
+ 110:../lab12-foreback.c ****         if( flagToggleLeds )            /* Las tareas se ejecutan en esta hebra (background) en ord
+ 111:../lab12-foreback.c ****         {
+ 112:../lab12-foreback.c ****             flagToggleLeds = FALSE;
+ 113:../lab12-foreback.c ****             Task1();
+ 114:../lab12-foreback.c ****         }
+ 115:../lab12-foreback.c ****         if( flagReadKeypad )        
+ 116:../lab12-foreback.c ****         {
+ 117:../lab12-foreback.c ****             flagReadKeypad = FALSE;
+ 118:../lab12-foreback.c ****             Task2();
+ 119:../lab12-foreback.c ****         }
+ 120:../lab12-foreback.c ****         if( flagWriteRTC )
+ 121:../lab12-foreback.c ****         {
+ 122:../lab12-foreback.c ****             flagWriteRTC = FALSE;
+ 123:../lab12-foreback.c ****             Task3();
+ 124:../lab12-foreback.c ****         }
+ 125:../lab12-foreback.c ****         if( flagWriteTicks )
+ 126:../lab12-foreback.c ****         {
+ 127:../lab12-foreback.c ****             flagWriteTicks = FALSE;
+ 128:../lab12-foreback.c ****             Task4();
+ 129:../lab12-foreback.c ****         }
+ 130:../lab12-foreback.c ****         if( flagTask5 )
+ 131:../lab12-foreback.c ****         {
+ 132:../lab12-foreback.c ****             flagTask5 = FALSE;
+ 133:../lab12-foreback.c ****             Task5();
+ 134:../lab12-foreback.c ****         }
+ 135:../lab12-foreback.c ****         if( flagTask6 )
+ 136:../lab12-foreback.c ****         {
+ 137:../lab12-foreback.c ****             flagTask6 = FALSE;
+ 138:../lab12-foreback.c ****             Task6();
+ 139:../lab12-foreback.c ****         }
+ 140:../lab12-foreback.c ****         if( flagPb )
+ 141:../lab12-foreback.c ****         {
+ 142:../lab12-foreback.c ****             flagPb = FALSE;
+ 143:../lab12-foreback.c ****             Task7();
+ 144:../lab12-foreback.c ****         }
+ 145:../lab12-foreback.c ****         if(flagTask8){
+ 146:../lab12-foreback.c ****         	flagTask8 = FALSE;
+ 147:../lab12-foreback.c ****         	Task8();
+ 148:../lab12-foreback.c ****         }
+ 149:../lab12-foreback.c ****         if(flagTask9){
+ 150:../lab12-foreback.c ****         	flagTask9 = FALSE;
+ 151:../lab12-foreback.c ****         	Task9();
+ 152:../lab12-foreback.c ****         }
+ 153:../lab12-foreback.c ****     }
+ 2262              		.loc 1 153 0
+ 2263 00f0 0000A0E1 		mov	r0, r0	@ nop
+ 2264              	.L11:
+ 109:../lab12-foreback.c ****         sleep();                        /* Entra en estado IDLE, sale por interrupción */
+ 2265              		.loc 1 109 0
+ 2266 00f4 FEFFFFEB 		bl	sleep
+ 110:../lab12-foreback.c ****         if( flagToggleLeds )            /* Las tareas se ejecutan en esta hebra (background) en ord
+ 2267              		.loc 1 110 0
+ 2268 00f8 44319FE5 		ldr	r3, .L13+20
+ 2269 00fc 0030D3E5 		ldrb	r3, [r3, #0]
+ 2270 0100 FF3003E2 		and	r3, r3, #255
+ 2271 0104 000053E3 		cmp	r3, #0
+ 2272 0108 0300000A 		beq	.L2
+ 112:../lab12-foreback.c ****             flagToggleLeds = FALSE;
+ 2273              		.loc 1 112 0
+ 2274 010c 30319FE5 		ldr	r3, .L13+20
+ 2275 0110 0020A0E3 		mov	r2, #0
+ 2276 0114 0020C3E5 		strb	r2, [r3, #0]
+ 113:../lab12-foreback.c ****             Task1();
+ 2277              		.loc 1 113 0
+ 2278 0118 FEFFFFEB 		bl	Task1
+ 2279              	.L2:
+ 115:../lab12-foreback.c ****         if( flagReadKeypad )        
+ 2280              		.loc 1 115 0
+ 2281 011c 24319FE5 		ldr	r3, .L13+24
+ 2282 0120 0030D3E5 		ldrb	r3, [r3, #0]
+ 2283 0124 FF3003E2 		and	r3, r3, #255
+ 2284 0128 000053E3 		cmp	r3, #0
+ 2285 012c 0300000A 		beq	.L3
+ 117:../lab12-foreback.c ****             flagReadKeypad = FALSE;
+ 2286              		.loc 1 117 0
+ 2287 0130 10319FE5 		ldr	r3, .L13+24
+ 2288 0134 0020A0E3 		mov	r2, #0
+ 2289 0138 0020C3E5 		strb	r2, [r3, #0]
+ 118:../lab12-foreback.c ****             Task2();
+ 2290              		.loc 1 118 0
+ 2291 013c FEFFFFEB 		bl	Task2
+ 2292              	.L3:
+ 120:../lab12-foreback.c ****         if( flagWriteRTC )
+ 2293              		.loc 1 120 0
+ 2294 0140 04319FE5 		ldr	r3, .L13+28
+ 2295 0144 0030D3E5 		ldrb	r3, [r3, #0]
+ 2296 0148 FF3003E2 		and	r3, r3, #255
+ 2297 014c 000053E3 		cmp	r3, #0
+ 2298 0150 0300000A 		beq	.L4
+ 122:../lab12-foreback.c ****             flagWriteRTC = FALSE;
+ 2299              		.loc 1 122 0
+ 2300 0154 F0309FE5 		ldr	r3, .L13+28
+ 2301 0158 0020A0E3 		mov	r2, #0
+ 2302 015c 0020C3E5 		strb	r2, [r3, #0]
+ 123:../lab12-foreback.c ****             Task3();
+ 2303              		.loc 1 123 0
+ 2304 0160 FEFFFFEB 		bl	Task3
+ 2305              	.L4:
+ 125:../lab12-foreback.c ****         if( flagWriteTicks )
+ 2306              		.loc 1 125 0
+ 2307 0164 E4309FE5 		ldr	r3, .L13+32
+ 2308 0168 0030D3E5 		ldrb	r3, [r3, #0]
+ 2309 016c FF3003E2 		and	r3, r3, #255
+ 2310 0170 000053E3 		cmp	r3, #0
+ 2311 0174 0300000A 		beq	.L5
+ 127:../lab12-foreback.c ****             flagWriteTicks = FALSE;
+ 2312              		.loc 1 127 0
+ 2313 0178 D0309FE5 		ldr	r3, .L13+32
+ 2314 017c 0020A0E3 		mov	r2, #0
+ 2315 0180 0020C3E5 		strb	r2, [r3, #0]
+ 128:../lab12-foreback.c ****             Task4();
+ 2316              		.loc 1 128 0
+ 2317 0184 FEFFFFEB 		bl	Task4
+ 2318              	.L5:
+ 130:../lab12-foreback.c ****         if( flagTask5 )
+ 2319              		.loc 1 130 0
+ 2320 0188 A8309FE5 		ldr	r3, .L13+8
+ 2321 018c 0030D3E5 		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 2322 0190 000053E3 		cmp	r3, #0
+ 2323 0194 0300000A 		beq	.L6
+ 132:../lab12-foreback.c ****             flagTask5 = FALSE;
+ 2324              		.loc 1 132 0
+ 2325 0198 98309FE5 		ldr	r3, .L13+8
+ 2326 019c 0020A0E3 		mov	r2, #0
+ 2327 01a0 0020C3E5 		strb	r2, [r3, #0]
+ 133:../lab12-foreback.c ****             Task5();
+ 2328              		.loc 1 133 0
+ 2329 01a4 FEFFFFEB 		bl	Task5
+ 2330              	.L6:
+ 135:../lab12-foreback.c ****         if( flagTask6 )
+ 2331              		.loc 1 135 0
+ 2332 01a8 8C309FE5 		ldr	r3, .L13+12
+ 2333 01ac 0030D3E5 		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 2334 01b0 000053E3 		cmp	r3, #0
+ 2335 01b4 0300000A 		beq	.L7
+ 137:../lab12-foreback.c ****             flagTask6 = FALSE;
+ 2336              		.loc 1 137 0
+ 2337 01b8 7C309FE5 		ldr	r3, .L13+12
+ 2338 01bc 0020A0E3 		mov	r2, #0
+ 2339 01c0 0020C3E5 		strb	r2, [r3, #0]
+ 138:../lab12-foreback.c ****             Task6();
+ 2340              		.loc 1 138 0
+ 2341 01c4 FEFFFFEB 		bl	Task6
+ 2342              	.L7:
+ 140:../lab12-foreback.c ****         if( flagPb )
+ 2343              		.loc 1 140 0
+ 2344 01c8 70309FE5 		ldr	r3, .L13+16
+ 2345 01cc 0030D3E5 		ldrb	r3, [r3, #0]
+ 2346 01d0 FF3003E2 		and	r3, r3, #255
+ 2347 01d4 000053E3 		cmp	r3, #0
+ 2348 01d8 0300000A 		beq	.L8
+ 142:../lab12-foreback.c ****             flagPb = FALSE;
+ 2349              		.loc 1 142 0
+ 2350 01dc 5C309FE5 		ldr	r3, .L13+16
+ 2351 01e0 0020A0E3 		mov	r2, #0
+ 2352 01e4 0020C3E5 		strb	r2, [r3, #0]
+ 143:../lab12-foreback.c ****             Task7();
+ 2353              		.loc 1 143 0
+ 2354 01e8 FEFFFFEB 		bl	Task7
+ 2355              	.L8:
+ 145:../lab12-foreback.c ****         if(flagTask8){
+ 2356              		.loc 1 145 0
+ 2357 01ec 60309FE5 		ldr	r3, .L13+36
+ 2358 01f0 0030D3E5 		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 2359 01f4 000053E3 		cmp	r3, #0
+ 2360 01f8 0300000A 		beq	.L9
+ 146:../lab12-foreback.c ****         	flagTask8 = FALSE;
+ 2361              		.loc 1 146 0
+ 2362 01fc 50309FE5 		ldr	r3, .L13+36
+ 2363 0200 0020A0E3 		mov	r2, #0
+ 2364 0204 0020C3E5 		strb	r2, [r3, #0]
+ 147:../lab12-foreback.c ****         	Task8();
+ 2365              		.loc 1 147 0
+ 2366 0208 FEFFFFEB 		bl	Task8
+ 2367              	.L9:
+ 149:../lab12-foreback.c ****         if(flagTask9){
+ 2368              		.loc 1 149 0
+ 2369 020c 44309FE5 		ldr	r3, .L13+40
+ 2370 0210 0030D3E5 		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 2371 0214 000053E3 		cmp	r3, #0
+ 2372 0218 B4FFFF0A 		beq	.L12
+ 150:../lab12-foreback.c ****         	flagTask9 = FALSE;
+ 2373              		.loc 1 150 0
+ 2374 021c 34309FE5 		ldr	r3, .L13+40
+ 2375 0220 0020A0E3 		mov	r2, #0
+ 2376 0224 0020C3E5 		strb	r2, [r3, #0]
+ 151:../lab12-foreback.c ****         	Task9();
+ 2377              		.loc 1 151 0
+ 2378 0228 FEFFFFEB 		bl	Task9
+ 2379              		.loc 1 153 0
+ 2380 022c B0FFFFEA 		b	.L11
+ 2381              	.L14:
+ 2382              		.align	2
+ 2383              	.L13:
+ 2384 0230 00000000 		.word	.LC0
+ 2385 0234 34000000 		.word	.LC1
+ 2386 0238 00000000 		.word	flagTask5
+ 2387 023c 00000000 		.word	flagTask6
+ 2388 0240 00000000 		.word	flagPb
+ 2389 0244 00000000 		.word	flagToggleLeds
+ 2390 0248 00000000 		.word	flagReadKeypad
+ 2391 024c 00000000 		.word	flagWriteRTC
+ 2392 0250 00000000 		.word	flagWriteTicks
+ 2393 0254 00000000 		.word	flagTask8
+ 2394 0258 00000000 		.word	flagTask9
+ 2395 025c 00000000 		.word	isr_pb
+ 2396 0260 00000000 		.word	isr_tick
+ 2397              		.cfi_endproc
+ 2398              	.LFE0:
+ 2400              		.section	.rodata
+ 2401 0067 00       		.align	2
+ 2402              	.LC2:
+ 2403 0068 20546173 		.ascii	" Task 8: iniciada.\012\000"
+ 2403      6B20383A 
+ 2403      20696E69 
+ 2403      63696164 
+ 2403      612E0A00 
+ 2404              		.align	2
+ 2405              	.LC3:
+ 2406 007c 5465636C 		.ascii	"Tecla: \000"
+ 2406      613A2000 
+ 2407              		.text
+ 2408              		.align	2
+ 2409              		.global	Task8
+ 2411              	Task8:
+ 2412              	.LFB1:
+ 154:../lab12-foreback.c **** }
+ 155:../lab12-foreback.c **** 
+ 156:../lab12-foreback.c **** /*******************************************************************/
+ 157:../lab12-foreback.c **** 
+ 158:../lab12-foreback.c **** void Task8(void){
+ 2413              		.loc 1 158 0
+ 2414              		.cfi_startproc
+ 2415              		@ Function supports interworking.
+ 2416              		@ args = 0, pretend = 0, frame = 0
+ 2417              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2418 0264 0DC0A0E1 		mov	ip, sp
+ 2419              	.LCFI2:
+ 2420              		.cfi_def_cfa_register 12
+ 2421 0268 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 2422 026c 04B04CE2 		sub	fp, ip, #4
+ 2423              		.cfi_offset 14, -8
+ 2424              		.cfi_offset 13, -12
+ 2425              		.cfi_offset 11, -16
+ 2426              	.LCFI3:
+ 2427              		.cfi_def_cfa 11, 4
+ 159:../lab12-foreback.c **** 	static boolean init = TRUE;
+ 160:../lab12-foreback.c **** 	if(init){
+ 2428              		.loc 1 160 0
+ 2429 0270 58309FE5 		ldr	r3, .L18
+ 2430 0274 0030D3E5 		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 2431 0278 000053E3 		cmp	r3, #0
+ 2432 027c 0500000A 		beq	.L16
+ 161:../lab12-foreback.c **** 		init = FALSE;
+ 2433              		.loc 1 161 0
+ 2434 0280 48309FE5 		ldr	r3, .L18
+ 2435 0284 0020A0E3 		mov	r2, #0
+ 2436 0288 0020C3E5 		strb	r2, [r3, #0]
+ 162:../lab12-foreback.c **** 		uart0_puts( " Task 8: iniciada.\n" );
+ 2437              		.loc 1 162 0
+ 2438 028c 40009FE5 		ldr	r0, .L18+4
+ 2439 0290 FEFFFFEB 		bl	uart0_puts
+ 2440 0294 0A0000EA 		b	.L15
+ 2441              	.L16:
+ 163:../lab12-foreback.c **** 	}
+ 164:../lab12-foreback.c **** 	else{
+ 165:../lab12-foreback.c **** 		lcd_puts_x2( 20, 56, BLACK, "Tecla: " );
+ 2442              		.loc 1 165 0
+ 2443 0298 1400A0E3 		mov	r0, #20
+ 2444 029c 3810A0E3 		mov	r1, #56
+ 2445 02a0 0F20A0E3 		mov	r2, #15
+ 2446 02a4 2C309FE5 		ldr	r3, .L18+8
+ 2447 02a8 FEFFFFEB 		bl	lcd_puts_x2
+ 166:../lab12-foreback.c **** 		lcd_puthex_x2(125,56,BLACK, scancode);
+ 2448              		.loc 1 166 0
+ 2449 02ac 28309FE5 		ldr	r3, .L18+12
+ 2450 02b0 0030D3E5 		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 2451 02b4 7D00A0E3 		mov	r0, #125
+ 2452 02b8 3810A0E3 		mov	r1, #56
+ 2453 02bc 0F20A0E3 		mov	r2, #15
+ 2454 02c0 FEFFFFEB 		bl	lcd_puthex_x2
+ 2455              	.L15:
+ 167:../lab12-foreback.c **** 	}
+ 168:../lab12-foreback.c **** }
+ 2456              		.loc 1 168 0
+ 2457 02c4 0CD04BE2 		sub	sp, fp, #12
+ 2458 02c8 00689DE8 		ldmfd	sp, {fp, sp, lr}
+ 2459 02cc 1EFF2FE1 		bx	lr
+ 2460              	.L19:
+ 2461              		.align	2
+ 2462              	.L18:
+ 2463 02d0 10000000 		.word	init.4173
+ 2464 02d4 68000000 		.word	.LC2
+ 2465 02d8 7C000000 		.word	.LC3
+ 2466 02dc 00000000 		.word	scancode
+ 2467              		.cfi_endproc
+ 2468              	.LFE1:
+ 2470              		.section	.rodata
+ 2471              		.align	2
+ 2472              	.LC4:
+ 2473 0084 20546173 		.ascii	" Task 9: iniciada.\012\000"
+ 2473      6B20393A 
+ 2473      20696E69 
+ 2473      63696164 
+ 2473      612E0A00 
+ 2474              		.align	2
+ 2475              	.LC5:
+ 2476 0098 53656775 		.ascii	"Segundos: \000"
+ 2476      6E646F73 
+ 2476      3A2000
+ 2477              		.text
+ 2478              		.align	2
+ 2479              		.global	Task9
+ 2481              	Task9:
+ 2482              	.LFB2:
+ 169:../lab12-foreback.c **** 
+ 170:../lab12-foreback.c **** void Task9(void){
+ 2483              		.loc 1 170 0
+ 2484              		.cfi_startproc
+ 2485              		@ Function supports interworking.
+ 2486              		@ args = 0, pretend = 0, frame = 16
+ 2487              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2488 02e0 0DC0A0E1 		mov	ip, sp
+ 2489              	.LCFI4:
+ 2490              		.cfi_def_cfa_register 12
+ 2491 02e4 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 2492 02e8 04B04CE2 		sub	fp, ip, #4
+ 2493              		.cfi_offset 14, -8
+ 2494              		.cfi_offset 13, -12
+ 2495              		.cfi_offset 11, -16
+ 2496              	.LCFI5:
+ 2497              		.cfi_def_cfa 11, 4
+ 2498 02ec 10D04DE2 		sub	sp, sp, #16
+ 171:../lab12-foreback.c **** 	static boolean init = TRUE;
+ 172:../lab12-foreback.c **** 	rtc_time_t rtc_time;
+ 173:../lab12-foreback.c **** 	uint32 time_sec;
+ 174:../lab12-foreback.c **** 	if(init){
+ 2499              		.loc 1 174 0
+ 2500 02f0 B0309FE5 		ldr	r3, .L23
+ 2501 02f4 0030D3E5 		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 2502 02f8 000053E3 		cmp	r3, #0
+ 2503 02fc 0500000A 		beq	.L21
+ 175:../lab12-foreback.c **** 		init = FALSE;
+ 2504              		.loc 1 175 0
+ 2505 0300 A0309FE5 		ldr	r3, .L23
+ 2506 0304 0020A0E3 		mov	r2, #0
+ 2507 0308 0020C3E5 		strb	r2, [r3, #0]
+ 176:../lab12-foreback.c **** 		uart0_puts( " Task 9: iniciada.\n" );
+ 2508              		.loc 1 176 0
+ 2509 030c 98009FE5 		ldr	r0, .L23+4
+ 2510 0310 FEFFFFEB 		bl	uart0_puts
+ 2511 0314 200000EA 		b	.L20
+ 2512              	.L21:
+ 177:../lab12-foreback.c **** 	}
+ 178:../lab12-foreback.c **** 	else{
+ 179:../lab12-foreback.c **** 		rtc_gettime( &rtc_time );
+ 2513              		.loc 1 179 0
+ 2514 0318 18304BE2 		sub	r3, fp, #24
+ 2515 031c 0300A0E1 		mov	r0, r3
+ 2516 0320 FEFFFFEB 		bl	rtc_gettime
+ 180:../lab12-foreback.c **** 		time_sec = rtc_time.hour*3600 + rtc_time.min*60 + rtc_time.sec;
+ 2517              		.loc 1 180 0
+ 2518 0324 16305BE5 		ldrb	r3, [fp, #-22]	@ zero_extendqisi2
+ 2519 0328 0320A0E1 		mov	r2, r3
+ 2520 032c 0230A0E1 		mov	r3, r2
+ 2521 0330 0332A0E1 		mov	r3, r3, asl #4
+ 2522 0334 033062E0 		rsb	r3, r2, r3
+ 2523 0338 0322A0E1 		mov	r2, r3, asl #4
+ 2524 033c 022063E0 		rsb	r2, r3, r2
+ 2525 0340 0232A0E1 		mov	r3, r2, asl #4
+ 2526 0344 0320A0E1 		mov	r2, r3
+ 2527 0348 0210A0E1 		mov	r1, r2
+ 2528 034c 17305BE5 		ldrb	r3, [fp, #-23]	@ zero_extendqisi2
+ 2529 0350 0320A0E1 		mov	r2, r3
+ 2530 0354 0230A0E1 		mov	r3, r2
+ 2531 0358 0332A0E1 		mov	r3, r3, asl #4
+ 2532 035c 033062E0 		rsb	r3, r2, r3
+ 2533 0360 0331A0E1 		mov	r3, r3, asl #2
+ 2534 0364 032081E0 		add	r2, r1, r3
+ 2535 0368 18305BE5 		ldrb	r3, [fp, #-24]	@ zero_extendqisi2
+ 2536 036c 033082E0 		add	r3, r2, r3
+ 2537 0370 10300BE5 		str	r3, [fp, #-16]
+ 181:../lab12-foreback.c **** 		lcd_puts_x2( 20, 26, BLACK, "Segundos: " );
+ 2538              		.loc 1 181 0
+ 2539 0374 1400A0E3 		mov	r0, #20
+ 2540 0378 1A10A0E3 		mov	r1, #26
+ 2541 037c 0F20A0E3 		mov	r2, #15
+ 2542 0380 28309FE5 		ldr	r3, .L23+8
+ 2543 0384 FEFFFFEB 		bl	lcd_puts_x2
+ 182:../lab12-foreback.c **** 		lcd_putint_x2(175,26,BLACK, time_sec);
+ 2544              		.loc 1 182 0
+ 2545 0388 10301BE5 		ldr	r3, [fp, #-16]
+ 2546 038c AF00A0E3 		mov	r0, #175
+ 2547 0390 1A10A0E3 		mov	r1, #26
+ 2548 0394 0F20A0E3 		mov	r2, #15
+ 2549 0398 FEFFFFEB 		bl	lcd_putint_x2
+ 2550              	.L20:
+ 183:../lab12-foreback.c **** 	}
+ 184:../lab12-foreback.c **** }
+ 2551              		.loc 1 184 0
+ 2552 039c 0CD04BE2 		sub	sp, fp, #12
+ 2553 03a0 00689DE8 		ldmfd	sp, {fp, sp, lr}
+ 2554 03a4 1EFF2FE1 		bx	lr
+ 2555              	.L24:
+ 2556              		.align	2
+ 2557              	.L23:
+ 2558 03a8 0F000000 		.word	init.4177
+ 2559 03ac 84000000 		.word	.LC4
+ 2560 03b0 98000000 		.word	.LC5
+ 2561              		.cfi_endproc
+ 2562              	.LFE2:
+ 2564              		.section	.rodata
+ 2565 00a3 00       		.align	2
+ 2566              	.LC6:
+ 2567 00a4 20546173 		.ascii	" Task 1: iniciada.\012\000"
+ 2567      6B20313A 
+ 2567      20696E69 
+ 2567      63696164 
+ 2567      612E0A00 
+ 2568              		.text
+ 2569              		.align	2
+ 2570              		.global	Task1
+ 2572              	Task1:
+ 2573              	.LFB3:
+ 185:../lab12-foreback.c **** 
+ 186:../lab12-foreback.c **** void Task1( void )  /* Cada 0,5 segundos (50 ticks) alterna el led que se enciende */
+ 187:../lab12-foreback.c **** {
+ 2574              		.loc 1 187 0
+ 2575              		.cfi_startproc
+ 2576              		@ Function supports interworking.
+ 2577              		@ args = 0, pretend = 0, frame = 0
+ 2578              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2579 03b4 0DC0A0E1 		mov	ip, sp
+ 2580              	.LCFI6:
+ 2581              		.cfi_def_cfa_register 12
+ 2582 03b8 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 2583 03bc 04B04CE2 		sub	fp, ip, #4
+ 2584              		.cfi_offset 14, -8
+ 2585              		.cfi_offset 13, -12
+ 2586              		.cfi_offset 11, -16
+ 2587              	.LCFI7:
+ 2588              		.cfi_def_cfa 11, 4
+ 188:../lab12-foreback.c ****     static boolean init = TRUE;
+ 189:../lab12-foreback.c ****   
+ 190:../lab12-foreback.c ****     if( init )
+ 2589              		.loc 1 190 0
+ 2590 03c0 4C309FE5 		ldr	r3, .L28
+ 2591 03c4 0030D3E5 		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 2592 03c8 000053E3 		cmp	r3, #0
+ 2593 03cc 0900000A 		beq	.L26
+ 191:../lab12-foreback.c ****     {
+ 192:../lab12-foreback.c ****         init = FALSE;
+ 2594              		.loc 1 192 0
+ 2595 03d0 3C309FE5 		ldr	r3, .L28
+ 2596 03d4 0020A0E3 		mov	r2, #0
+ 2597 03d8 0020C3E5 		strb	r2, [r3, #0]
+ 193:../lab12-foreback.c ****         uart0_puts( " Task 1: iniciada.\n" );  /* Muestra un mensaje inicial en la UART0 (no es nec
+ 2598              		.loc 1 193 0
+ 2599 03dc 34009FE5 		ldr	r0, .L28+4
+ 2600 03e0 FEFFFFEB 		bl	uart0_puts
+ 194:../lab12-foreback.c ****         led_on( LEFT_LED );
+ 2601              		.loc 1 194 0
+ 2602 03e4 0100A0E3 		mov	r0, #1
+ 2603 03e8 FEFFFFEB 		bl	led_on
+ 195:../lab12-foreback.c ****         led_off( RIGHT_LED );
+ 2604              		.loc 1 195 0
+ 2605 03ec 0200A0E3 		mov	r0, #2
+ 2606 03f0 FEFFFFEB 		bl	led_off
+ 2607 03f4 030000EA 		b	.L25
+ 2608              	.L26:
+ 196:../lab12-foreback.c ****     }
+ 197:../lab12-foreback.c ****     else
+ 198:../lab12-foreback.c ****     {
+ 199:../lab12-foreback.c ****         led_toggle( LEFT_LED );
+ 2609              		.loc 1 199 0
+ 2610 03f8 0100A0E3 		mov	r0, #1
+ 2611 03fc FEFFFFEB 		bl	led_toggle
+ 200:../lab12-foreback.c ****         led_toggle( RIGHT_LED );
+ 2612              		.loc 1 200 0
+ 2613 0400 0200A0E3 		mov	r0, #2
+ 2614 0404 FEFFFFEB 		bl	led_toggle
+ 2615              	.L25:
+ 201:../lab12-foreback.c ****     }
+ 202:../lab12-foreback.c **** }
+ 2616              		.loc 1 202 0
+ 2617 0408 0CD04BE2 		sub	sp, fp, #12
+ 2618 040c 00689DE8 		ldmfd	sp, {fp, sp, lr}
+ 2619 0410 1EFF2FE1 		bx	lr
+ 2620              	.L29:
+ 2621              		.align	2
+ 2622              	.L28:
+ 2623 0414 0E000000 		.word	init.4183
+ 2624 0418 A4000000 		.word	.LC6
+ 2625              		.cfi_endproc
+ 2626              	.LFE3:
+ 2628              		.section	.rodata
+ 2629              		.align	2
+ 2630              	.LC7:
+ 2631 00b8 20546173 		.ascii	" Task 2: iniciada.\012\000"
+ 2631      6B20323A 
+ 2631      20696E69 
+ 2631      63696164 
+ 2631      612E0A00 
+ 2632              		.text
+ 2633              		.align	2
+ 2634              		.global	Task2
+ 2636              	Task2:
+ 2637              	.LFB4:
+ 203:../lab12-foreback.c **** 
+ 204:../lab12-foreback.c **** void Task2( void )  /* Cada 50 ms (5 ticks) muestrea el keypad y envía el scancode a otras tareas *
+ 205:../lab12-foreback.c **** {
+ 2638              		.loc 1 205 0
+ 2639              		.cfi_startproc
+ 2640              		@ Function supports interworking.
+ 2641              		@ args = 0, pretend = 0, frame = 0
+ 2642              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2643 041c 0DC0A0E1 		mov	ip, sp
+ 2644              	.LCFI8:
+ 2645              		.cfi_def_cfa_register 12
+ 2646 0420 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 2647 0424 04B04CE2 		sub	fp, ip, #4
+ 2648              		.cfi_offset 14, -8
+ 2649              		.cfi_offset 13, -12
+ 2650              		.cfi_offset 11, -16
+ 2651              	.LCFI9:
+ 2652              		.cfi_def_cfa 11, 4
+ 206:../lab12-foreback.c ****     static boolean init = TRUE;
+ 207:../lab12-foreback.c ****     static enum { wait_keydown, scan, wait_keyup } state;
+ 208:../lab12-foreback.c **** 
+ 209:../lab12-foreback.c ****     if( init )
+ 2653              		.loc 1 209 0
+ 2654 0428 FC309FE5 		ldr	r3, .L41
+ 2655 042c 0030D3E5 		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 2656 0430 000053E3 		cmp	r3, #0
+ 2657 0434 0800000A 		beq	.L31
+ 210:../lab12-foreback.c ****     {
+ 211:../lab12-foreback.c ****         init  = FALSE;
+ 2658              		.loc 1 211 0
+ 2659 0438 EC309FE5 		ldr	r3, .L41
+ 2660 043c 0020A0E3 		mov	r2, #0
+ 2661 0440 0020C3E5 		strb	r2, [r3, #0]
+ 212:../lab12-foreback.c ****         uart0_puts( " Task 2: iniciada.\n" );  /* Muestra un mensaje inicial en la UART0 (no es nec
+ 2662              		.loc 1 212 0
+ 2663 0444 E4009FE5 		ldr	r0, .L41+4
+ 2664 0448 FEFFFFEB 		bl	uart0_puts
+ 213:../lab12-foreback.c ****         state = wait_keydown;
+ 2665              		.loc 1 213 0
+ 2666 044c E0309FE5 		ldr	r3, .L41+8
+ 2667 0450 0020A0E3 		mov	r2, #0
+ 2668 0454 0020C3E5 		strb	r2, [r3, #0]
+ 2669 0458 300000EA 		b	.L30
+ 2670              	.L31:
+ 214:../lab12-foreback.c ****     }
+ 215:../lab12-foreback.c ****     else switch( state )
+ 2671              		.loc 1 215 0
+ 2672 045c D0309FE5 		ldr	r3, .L41+8
+ 2673 0460 0030D3E5 		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 2674 0464 010053E3 		cmp	r3, #1
+ 2675 0468 0B00000A 		beq	.L34
+ 2676 046c 020053E3 		cmp	r3, #2
+ 2677 0470 1F00000A 		beq	.L35
+ 2678 0474 000053E3 		cmp	r3, #0
+ 2679 0478 2800001A 		bne	.L30
+ 2680              	.L33:
+ 216:../lab12-foreback.c ****     {
+ 217:../lab12-foreback.c ****         case wait_keydown:
+ 218:../lab12-foreback.c ****             if( keypad_pressed() )
+ 2681              		.loc 1 218 0
+ 2682 047c FEFFFFEB 		bl	keypad_pressed
+ 2683 0480 0030A0E1 		mov	r3, r0
+ 2684 0484 000053E3 		cmp	r3, #0
+ 2685 0488 2100000A 		beq	.L39
+ 219:../lab12-foreback.c ****                 state = scan;
+ 2686              		.loc 1 219 0
+ 2687 048c A0309FE5 		ldr	r3, .L41+8
+ 2688 0490 0120A0E3 		mov	r2, #1
+ 2689 0494 0020C3E5 		strb	r2, [r3, #0]
+ 220:../lab12-foreback.c ****             break;
+ 2690              		.loc 1 220 0
+ 2691 0498 200000EA 		b	.L30
+ 2692              	.L34:
+ 221:../lab12-foreback.c ****         case scan:
+ 222:../lab12-foreback.c ****             scancode = keypad_scan();
+ 2693              		.loc 1 222 0
+ 2694 049c FEFFFFEB 		bl	keypad_scan
+ 2695 04a0 0030A0E1 		mov	r3, r0
+ 2696 04a4 0320A0E1 		mov	r2, r3
+ 2697 04a8 88309FE5 		ldr	r3, .L41+12
+ 2698 04ac 0020C3E5 		strb	r2, [r3, #0]
+ 223:../lab12-foreback.c ****             if( scancode != KEYPAD_FAILURE )
+ 2699              		.loc 1 223 0
+ 2700 04b0 80309FE5 		ldr	r3, .L41+12
+ 2701 04b4 0030D3E5 		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 2702 04b8 FF0053E3 		cmp	r3, #255
+ 2703 04bc 0800000A 		beq	.L37
+ 224:../lab12-foreback.c ****             {
+ 225:../lab12-foreback.c ****                 flagTask5 = TRUE;
+ 2704              		.loc 1 225 0
+ 2705 04c0 74309FE5 		ldr	r3, .L41+16
+ 2706 04c4 0120A0E3 		mov	r2, #1
+ 2707 04c8 0020C3E5 		strb	r2, [r3, #0]
+ 226:../lab12-foreback.c ****                 flagTask6 = TRUE;
+ 2708              		.loc 1 226 0
+ 2709 04cc 6C309FE5 		ldr	r3, .L41+20
+ 2710 04d0 0120A0E3 		mov	r2, #1
+ 2711 04d4 0020C3E5 		strb	r2, [r3, #0]
+ 227:../lab12-foreback.c ****                 flagTask8 = TRUE;
+ 2712              		.loc 1 227 0
+ 2713 04d8 64309FE5 		ldr	r3, .L41+24
+ 2714 04dc 0120A0E3 		mov	r2, #1
+ 2715 04e0 0020C3E5 		strb	r2, [r3, #0]
+ 2716              	.L37:
+ 228:../lab12-foreback.c ****             }
+ 229:../lab12-foreback.c ****             state = wait_keyup;
+ 2717              		.loc 1 229 0
+ 2718 04e4 48309FE5 		ldr	r3, .L41+8
+ 2719 04e8 0220A0E3 		mov	r2, #2
+ 2720 04ec 0020C3E5 		strb	r2, [r3, #0]
+ 230:../lab12-foreback.c ****             break;
+ 2721              		.loc 1 230 0
+ 2722 04f0 0A0000EA 		b	.L30
+ 2723              	.L35:
+ 231:../lab12-foreback.c ****         case wait_keyup:
+ 232:../lab12-foreback.c ****             if( !keypad_pressed() )
+ 2724              		.loc 1 232 0
+ 2725 04f4 FEFFFFEB 		bl	keypad_pressed
+ 2726 04f8 0030A0E1 		mov	r3, r0
+ 2727 04fc 000053E3 		cmp	r3, #0
+ 2728 0500 0500001A 		bne	.L40
+ 233:../lab12-foreback.c ****                 state = wait_keydown;
+ 2729              		.loc 1 233 0
+ 2730 0504 28309FE5 		ldr	r3, .L41+8
+ 2731 0508 0020A0E3 		mov	r2, #0
+ 2732 050c 0020C3E5 		strb	r2, [r3, #0]
+ 234:../lab12-foreback.c ****             break;
+ 2733              		.loc 1 234 0
+ 2734 0510 020000EA 		b	.L30
+ 2735              	.L39:
+ 220:../lab12-foreback.c ****             break;
+ 2736              		.loc 1 220 0
+ 2737 0514 0000A0E1 		mov	r0, r0	@ nop
+ 2738 0518 000000EA 		b	.L30
+ 2739              	.L40:
+ 2740              		.loc 1 234 0
+ 2741 051c 0000A0E1 		mov	r0, r0	@ nop
+ 2742              	.L30:
+ 235:../lab12-foreback.c ****     }
+ 236:../lab12-foreback.c **** }
+ 2743              		.loc 1 236 0
+ 2744 0520 0CD04BE2 		sub	sp, fp, #12
+ 2745 0524 00689DE8 		ldmfd	sp, {fp, sp, lr}
+ 2746 0528 1EFF2FE1 		bx	lr
+ 2747              	.L42:
+ 2748              		.align	2
+ 2749              	.L41:
+ 2750 052c 0D000000 		.word	init.4187
+ 2751 0530 B8000000 		.word	.LC7
+ 2752 0534 04000000 		.word	state.4192
+ 2753 0538 00000000 		.word	scancode
+ 2754 053c 00000000 		.word	flagTask5
+ 2755 0540 00000000 		.word	flagTask6
+ 2756 0544 00000000 		.word	flagTask8
+ 2757              		.cfi_endproc
+ 2758              	.LFE4:
+ 2760              		.section	.rodata
+ 2761              		.align	2
+ 2762              	.LC8:
+ 2763 00cc 20546173 		.ascii	" Task 3: iniciada.\012\000"
+ 2763      6B20333A 
+ 2763      20696E69 
+ 2763      63696164 
+ 2763      612E0A00 
+ 2764              		.align	2
+ 2765              	.LC9:
+ 2766 00e0 20202854 		.ascii	"  (Task 3) Hora: \000"
+ 2766      61736B20 
+ 2766      33292048 
+ 2766      6F72613A 
+ 2766      2000
+ 2767 00f2 0000     		.align	2
+ 2768              	.LC10:
+ 2769 00f4 0A00     		.ascii	"\012\000"
+ 2770              		.text
+ 2771              		.align	2
+ 2772              		.global	Task3
+ 2774              	Task3:
+ 2775              	.LFB5:
+ 237:../lab12-foreback.c **** 
+ 238:../lab12-foreback.c **** void Task3( void  )  /* Cada segundo (100 ticks) muestra por la UART0 la hora del RTC */
+ 239:../lab12-foreback.c **** {
+ 2776              		.loc 1 239 0
+ 2777              		.cfi_startproc
+ 2778              		@ Function supports interworking.
+ 2779              		@ args = 0, pretend = 0, frame = 8
+ 2780              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2781 0548 0DC0A0E1 		mov	ip, sp
+ 2782              	.LCFI10:
+ 2783              		.cfi_def_cfa_register 12
+ 2784 054c 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 2785 0550 04B04CE2 		sub	fp, ip, #4
+ 2786              		.cfi_offset 14, -8
+ 2787              		.cfi_offset 13, -12
+ 2788              		.cfi_offset 11, -16
+ 2789              	.LCFI11:
+ 2790              		.cfi_def_cfa 11, 4
+ 2791 0554 08D04DE2 		sub	sp, sp, #8
+ 240:../lab12-foreback.c ****     static boolean init = TRUE;
+ 241:../lab12-foreback.c ****     rtc_time_t rtc_time;
+ 242:../lab12-foreback.c ****     
+ 243:../lab12-foreback.c ****     if( init )
+ 2792              		.loc 1 243 0
+ 2793 0558 7C309FE5 		ldr	r3, .L46
+ 2794 055c 0030D3E5 		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 2795 0560 000053E3 		cmp	r3, #0
+ 2796 0564 0500000A 		beq	.L44
+ 244:../lab12-foreback.c ****     {
+ 245:../lab12-foreback.c ****         init = FALSE;
+ 2797              		.loc 1 245 0
+ 2798 0568 6C309FE5 		ldr	r3, .L46
+ 2799 056c 0020A0E3 		mov	r2, #0
+ 2800 0570 0020C3E5 		strb	r2, [r3, #0]
+ 246:../lab12-foreback.c ****         uart0_puts( " Task 3: iniciada.\n" );  /* Muestra un mensaje inicial en la UART0 (no es nec
+ 2801              		.loc 1 246 0
+ 2802 0574 64009FE5 		ldr	r0, .L46+4
+ 2803 0578 FEFFFFEB 		bl	uart0_puts
+ 2804 057c 130000EA 		b	.L43
+ 2805              	.L44:
+ 247:../lab12-foreback.c ****     }
+ 248:../lab12-foreback.c ****     else
+ 249:../lab12-foreback.c ****     {
+ 250:../lab12-foreback.c ****         rtc_gettime( &rtc_time );
+ 2806              		.loc 1 250 0
+ 2807 0580 14304BE2 		sub	r3, fp, #20
+ 2808 0584 0300A0E1 		mov	r0, r3
+ 2809 0588 FEFFFFEB 		bl	rtc_gettime
+ 251:../lab12-foreback.c ****         uart0_puts( "  (Task 3) Hora: " );
+ 2810              		.loc 1 251 0
+ 2811 058c 50009FE5 		ldr	r0, .L46+8
+ 2812 0590 FEFFFFEB 		bl	uart0_puts
+ 252:../lab12-foreback.c ****         uart0_putint( rtc_time.hour );
+ 2813              		.loc 1 252 0
+ 2814 0594 12305BE5 		ldrb	r3, [fp, #-18]	@ zero_extendqisi2
+ 2815 0598 0300A0E1 		mov	r0, r3
+ 2816 059c FEFFFFEB 		bl	uart0_putint
+ 253:../lab12-foreback.c ****         uart0_putchar( ':' );
+ 2817              		.loc 1 253 0
+ 2818 05a0 3A00A0E3 		mov	r0, #58
+ 2819 05a4 FEFFFFEB 		bl	uart0_putchar
+ 254:../lab12-foreback.c ****         uart0_putint( rtc_time.min );
+ 2820              		.loc 1 254 0
+ 2821 05a8 13305BE5 		ldrb	r3, [fp, #-19]	@ zero_extendqisi2
+ 2822 05ac 0300A0E1 		mov	r0, r3
+ 2823 05b0 FEFFFFEB 		bl	uart0_putint
+ 255:../lab12-foreback.c ****         uart0_putchar( ':' );
+ 2824              		.loc 1 255 0
+ 2825 05b4 3A00A0E3 		mov	r0, #58
+ 2826 05b8 FEFFFFEB 		bl	uart0_putchar
+ 256:../lab12-foreback.c ****         uart0_putint( rtc_time.sec );
+ 2827              		.loc 1 256 0
+ 2828 05bc 14305BE5 		ldrb	r3, [fp, #-20]	@ zero_extendqisi2
+ 2829 05c0 0300A0E1 		mov	r0, r3
+ 2830 05c4 FEFFFFEB 		bl	uart0_putint
+ 257:../lab12-foreback.c ****         uart0_puts( "\n" );
+ 2831              		.loc 1 257 0
+ 2832 05c8 18009FE5 		ldr	r0, .L46+12
+ 2833 05cc FEFFFFEB 		bl	uart0_puts
+ 2834              	.L43:
+ 258:../lab12-foreback.c ****     }
+ 259:../lab12-foreback.c **** }
+ 2835              		.loc 1 259 0
+ 2836 05d0 0CD04BE2 		sub	sp, fp, #12
+ 2837 05d4 00689DE8 		ldmfd	sp, {fp, sp, lr}
+ 2838 05d8 1EFF2FE1 		bx	lr
+ 2839              	.L47:
+ 2840              		.align	2
+ 2841              	.L46:
+ 2842 05dc 0C000000 		.word	init.4200
+ 2843 05e0 CC000000 		.word	.LC8
+ 2844 05e4 E0000000 		.word	.LC9
+ 2845 05e8 F4000000 		.word	.LC10
+ 2846              		.cfi_endproc
+ 2847              	.LFE5:
+ 2849              		.section	.rodata
+ 2850 00f6 0000     		.align	2
+ 2851              	.LC11:
+ 2852 00f8 20546173 		.ascii	" Task 4: iniciada.\012\000"
+ 2852      6B20343A 
+ 2852      20696E69 
+ 2852      63696164 
+ 2852      612E0A00 
+ 2853              		.align	2
+ 2854              	.LC12:
+ 2855 010c 20202854 		.ascii	"  (Task 4) Ticks: \000"
+ 2855      61736B20 
+ 2855      34292054 
+ 2855      69636B73 
+ 2855      3A2000
+ 2856              		.text
+ 2857              		.align	2
+ 2858              		.global	Task4
+ 2860              	Task4:
+ 2861              	.LFB6:
+ 260:../lab12-foreback.c **** 
+ 261:../lab12-foreback.c **** void Task4( void )  /* Cada 10 segundos (1000 ticks) muestra por la UART0 los ticks transcurridos *
+ 262:../lab12-foreback.c **** {
+ 2862              		.loc 1 262 0
+ 2863              		.cfi_startproc
+ 2864              		@ Function supports interworking.
+ 2865              		@ args = 0, pretend = 0, frame = 0
+ 2866              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2867 05ec 0DC0A0E1 		mov	ip, sp
+ 2868              	.LCFI12:
+ 2869              		.cfi_def_cfa_register 12
+ 2870 05f0 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 2871 05f4 04B04CE2 		sub	fp, ip, #4
+ 2872              		.cfi_offset 14, -8
+ 2873              		.cfi_offset 13, -12
+ 2874              		.cfi_offset 11, -16
+ 2875              	.LCFI13:
+ 2876              		.cfi_def_cfa 11, 4
+ 263:../lab12-foreback.c ****     static boolean init = TRUE;
+ 264:../lab12-foreback.c ****     static uint32 ticks;
+ 265:../lab12-foreback.c ****     
+ 266:../lab12-foreback.c ****     if( init )
+ 2877              		.loc 1 266 0
+ 2878 05f8 6C309FE5 		ldr	r3, .L51
+ 2879 05fc 0030D3E5 		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 2880 0600 000053E3 		cmp	r3, #0
+ 2881 0604 0800000A 		beq	.L49
+ 267:../lab12-foreback.c ****     {
+ 268:../lab12-foreback.c ****         init = FALSE;
+ 2882              		.loc 1 268 0
+ 2883 0608 5C309FE5 		ldr	r3, .L51
+ 2884 060c 0020A0E3 		mov	r2, #0
+ 2885 0610 0020C3E5 		strb	r2, [r3, #0]
+ 269:../lab12-foreback.c ****         uart0_puts( " Task 4: iniciada.\n" );  /* Muestra un mensaje inicial en la UART0 (no es nec
+ 2886              		.loc 1 269 0
+ 2887 0614 54009FE5 		ldr	r0, .L51+4
+ 2888 0618 FEFFFFEB 		bl	uart0_puts
+ 270:../lab12-foreback.c ****         ticks = 0;
+ 2889              		.loc 1 270 0
+ 2890 061c 50309FE5 		ldr	r3, .L51+8
+ 2891 0620 0020A0E3 		mov	r2, #0
+ 2892 0624 002083E5 		str	r2, [r3, #0]
+ 2893 0628 0C0000EA 		b	.L48
+ 2894              	.L49:
+ 271:../lab12-foreback.c ****     }
+ 272:../lab12-foreback.c ****     else
+ 273:../lab12-foreback.c ****     {
+ 274:../lab12-foreback.c ****         ticks += TICKS_PER_SEC * 10;
+ 2895              		.loc 1 274 0
+ 2896 062c 40309FE5 		ldr	r3, .L51+8
+ 2897 0630 003093E5 		ldr	r3, [r3, #0]
+ 2898 0634 FA2F83E2 		add	r2, r3, #1000
+ 2899 0638 34309FE5 		ldr	r3, .L51+8
+ 2900 063c 002083E5 		str	r2, [r3, #0]
+ 275:../lab12-foreback.c ****         uart0_puts( "  (Task 4) Ticks: " );
+ 2901              		.loc 1 275 0
+ 2902 0640 30009FE5 		ldr	r0, .L51+12
+ 2903 0644 FEFFFFEB 		bl	uart0_puts
+ 276:../lab12-foreback.c ****         uart0_putint( ticks );
+ 2904              		.loc 1 276 0
+ 2905 0648 24309FE5 		ldr	r3, .L51+8
+ 2906 064c 003093E5 		ldr	r3, [r3, #0]
+ 2907 0650 0300A0E1 		mov	r0, r3
+ 2908 0654 FEFFFFEB 		bl	uart0_putint
+ 277:../lab12-foreback.c ****         uart0_puts( "\n" );
+ 2909              		.loc 1 277 0
+ 2910 0658 1C009FE5 		ldr	r0, .L51+16
+ 2911 065c FEFFFFEB 		bl	uart0_puts
+ 2912              	.L48:
+ 278:../lab12-foreback.c ****     }
+ 279:../lab12-foreback.c **** }
+ 2913              		.loc 1 279 0
+ 2914 0660 0CD04BE2 		sub	sp, fp, #12
+ 2915 0664 00689DE8 		ldmfd	sp, {fp, sp, lr}
+ 2916 0668 1EFF2FE1 		bx	lr
+ 2917              	.L52:
+ 2918              		.align	2
+ 2919              	.L51:
+ 2920 066c 0B000000 		.word	init.4205
+ 2921 0670 F8000000 		.word	.LC11
+ 2922 0674 00000000 		.word	ticks.4206
+ 2923 0678 0C010000 		.word	.LC12
+ 2924 067c F4000000 		.word	.LC10
+ 2925              		.cfi_endproc
+ 2926              	.LFE6:
+ 2928              		.section	.rodata
+ 2929 011f 00       		.align	2
+ 2930              	.LC13:
+ 2931 0120 20546173 		.ascii	" Task 5: iniciada.\012\000"
+ 2931      6B20353A 
+ 2931      20696E69 
+ 2931      63696164 
+ 2931      612E0A00 
+ 2932              		.align	2
+ 2933              	.LC14:
+ 2934 0134 20202854 		.ascii	"  (Task 5) Tecla pulsada: \000"
+ 2934      61736B20 
+ 2934      35292054 
+ 2934      65636C61 
+ 2934      2070756C 
+ 2935              		.text
+ 2936              		.align	2
+ 2937              		.global	Task5
+ 2939              	Task5:
+ 2940              	.LFB7:
+ 280:../lab12-foreback.c **** 
+ 281:../lab12-foreback.c **** void Task5( void )  /* Cada vez que reciba un scancode lo muestra por la UART0 */
+ 282:../lab12-foreback.c **** {
+ 2941              		.loc 1 282 0
+ 2942              		.cfi_startproc
+ 2943              		@ Function supports interworking.
+ 2944              		@ args = 0, pretend = 0, frame = 0
+ 2945              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2946 0680 0DC0A0E1 		mov	ip, sp
+ 2947              	.LCFI14:
+ 2948              		.cfi_def_cfa_register 12
+ 2949 0684 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 2950 0688 04B04CE2 		sub	fp, ip, #4
+ 2951              		.cfi_offset 14, -8
+ 2952              		.cfi_offset 13, -12
+ 2953              		.cfi_offset 11, -16
+ 2954              	.LCFI15:
+ 2955              		.cfi_def_cfa 11, 4
+ 283:../lab12-foreback.c ****     static boolean init = TRUE;
+ 284:../lab12-foreback.c **** 
+ 285:../lab12-foreback.c ****     if( init )
+ 2956              		.loc 1 285 0
+ 2957 068c 4C309FE5 		ldr	r3, .L56
+ 2958 0690 0030D3E5 		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 2959 0694 000053E3 		cmp	r3, #0
+ 2960 0698 0500000A 		beq	.L54
+ 286:../lab12-foreback.c ****     {
+ 287:../lab12-foreback.c ****         init = FALSE;
+ 2961              		.loc 1 287 0
+ 2962 069c 3C309FE5 		ldr	r3, .L56
+ 2963 06a0 0020A0E3 		mov	r2, #0
+ 2964 06a4 0020C3E5 		strb	r2, [r3, #0]
+ 288:../lab12-foreback.c ****         uart0_puts( " Task 5: iniciada.\n" );  /* Muestra un mensaje inicial en la UART0 (no es nec
+ 2965              		.loc 1 288 0
+ 2966 06a8 34009FE5 		ldr	r0, .L56+4
+ 2967 06ac FEFFFFEB 		bl	uart0_puts
+ 2968 06b0 070000EA 		b	.L53
+ 2969              	.L54:
+ 289:../lab12-foreback.c ****     }
+ 290:../lab12-foreback.c ****     else
+ 291:../lab12-foreback.c ****     {
+ 292:../lab12-foreback.c ****         uart0_puts( "  (Task 5) Tecla pulsada: " );
+ 2970              		.loc 1 292 0
+ 2971 06b4 2C009FE5 		ldr	r0, .L56+8
+ 2972 06b8 FEFFFFEB 		bl	uart0_puts
+ 293:../lab12-foreback.c ****         uart0_puthex( scancode );
+ 2973              		.loc 1 293 0
+ 2974 06bc 28309FE5 		ldr	r3, .L56+12
+ 2975 06c0 0030D3E5 		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 2976 06c4 0300A0E1 		mov	r0, r3
+ 2977 06c8 FEFFFFEB 		bl	uart0_puthex
+ 294:../lab12-foreback.c ****         uart0_puts( "\n" );
+ 2978              		.loc 1 294 0
+ 2979 06cc 1C009FE5 		ldr	r0, .L56+16
+ 2980 06d0 FEFFFFEB 		bl	uart0_puts
+ 2981              	.L53:
+ 295:../lab12-foreback.c ****     }
+ 296:../lab12-foreback.c **** }
+ 2982              		.loc 1 296 0
+ 2983 06d4 0CD04BE2 		sub	sp, fp, #12
+ 2984 06d8 00689DE8 		ldmfd	sp, {fp, sp, lr}
+ 2985 06dc 1EFF2FE1 		bx	lr
+ 2986              	.L57:
+ 2987              		.align	2
+ 2988              	.L56:
+ 2989 06e0 0A000000 		.word	init.4210
+ 2990 06e4 20010000 		.word	.LC13
+ 2991 06e8 34010000 		.word	.LC14
+ 2992 06ec 00000000 		.word	scancode
+ 2993 06f0 F4000000 		.word	.LC10
+ 2994              		.cfi_endproc
+ 2995              	.LFE7:
+ 2997              		.section	.rodata
+ 2998 014f 00       		.align	2
+ 2999              	.LC15:
+ 3000 0150 20546173 		.ascii	" Task 6: iniciada.\012\000"
+ 3000      6B20363A 
+ 3000      20696E69 
+ 3000      63696164 
+ 3000      612E0A00 
+ 3001              		.text
+ 3002              		.align	2
+ 3003              		.global	Task6
+ 3005              	Task6:
+ 3006              	.LFB8:
+ 297:../lab12-foreback.c **** 
+ 298:../lab12-foreback.c **** void Task6( void )  /* Cada vez que reciba un scancode lo muestra por los 7 segmentos */
+ 299:../lab12-foreback.c **** {
+ 3007              		.loc 1 299 0
+ 3008              		.cfi_startproc
+ 3009              		@ Function supports interworking.
+ 3010              		@ args = 0, pretend = 0, frame = 0
+ 3011              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3012 06f4 0DC0A0E1 		mov	ip, sp
+ 3013              	.LCFI16:
+ 3014              		.cfi_def_cfa_register 12
+ 3015 06f8 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 3016 06fc 04B04CE2 		sub	fp, ip, #4
+ 3017              		.cfi_offset 14, -8
+ 3018              		.cfi_offset 13, -12
+ 3019              		.cfi_offset 11, -16
+ 3020              	.LCFI17:
+ 3021              		.cfi_def_cfa 11, 4
+ 300:../lab12-foreback.c ****     static boolean init = TRUE;
+ 301:../lab12-foreback.c **** 
+ 302:../lab12-foreback.c ****     if( init )
+ 3022              		.loc 1 302 0
+ 3023 0700 3C309FE5 		ldr	r3, .L61
+ 3024 0704 0030D3E5 		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 3025 0708 000053E3 		cmp	r3, #0
+ 3026 070c 0500000A 		beq	.L59
+ 303:../lab12-foreback.c ****     {
+ 304:../lab12-foreback.c ****         init = FALSE;
+ 3027              		.loc 1 304 0
+ 3028 0710 2C309FE5 		ldr	r3, .L61
+ 3029 0714 0020A0E3 		mov	r2, #0
+ 3030 0718 0020C3E5 		strb	r2, [r3, #0]
+ 305:../lab12-foreback.c ****         uart0_puts( " Task 6: iniciada.\n" );  /* Muestra un mensaje inicial en la UART0 (no es nec
+ 3031              		.loc 1 305 0
+ 3032 071c 24009FE5 		ldr	r0, .L61+4
+ 3033 0720 FEFFFFEB 		bl	uart0_puts
+ 3034 0724 030000EA 		b	.L58
+ 3035              	.L59:
+ 306:../lab12-foreback.c ****     }
+ 307:../lab12-foreback.c ****     else
+ 308:../lab12-foreback.c ****     {
+ 309:../lab12-foreback.c ****         segs_putchar( scancode );
+ 3036              		.loc 1 309 0
+ 3037 0728 1C309FE5 		ldr	r3, .L61+8
+ 3038 072c 0030D3E5 		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 3039 0730 0300A0E1 		mov	r0, r3
+ 3040 0734 FEFFFFEB 		bl	segs_putchar
+ 3041              	.L58:
+ 310:../lab12-foreback.c ****     }
+ 311:../lab12-foreback.c **** }
+ 3042              		.loc 1 311 0
+ 3043 0738 0CD04BE2 		sub	sp, fp, #12
+ 3044 073c 00689DE8 		ldmfd	sp, {fp, sp, lr}
+ 3045 0740 1EFF2FE1 		bx	lr
+ 3046              	.L62:
+ 3047              		.align	2
+ 3048              	.L61:
+ 3049 0744 09000000 		.word	init.4214
+ 3050 0748 50010000 		.word	.LC15
+ 3051 074c 00000000 		.word	scancode
+ 3052              		.cfi_endproc
+ 3053              	.LFE8:
+ 3055              		.section	.rodata
+ 3056              		.align	2
+ 3057              	.LC16:
+ 3058 0164 20546173 		.ascii	" Task 7: iniciada.\012\000"
+ 3058      6B20373A 
+ 3058      20696E69 
+ 3058      63696164 
+ 3058      612E0A00 
+ 3059              		.align	2
+ 3060              	.LC17:
+ 3061 0178 20202854 		.ascii	"  (Task 7) Se ha pulsado alg\372n pushbutton...\012"
+ 3061      61736B20 
+ 3061      37292053 
+ 3061      65206861 
+ 3061      2070756C 
+ 3062 01a5 00       		.ascii	"\000"
+ 3063 01a6 0000     		.text
+ 3064              		.align	2
+ 3065              		.global	Task7
+ 3067              	Task7:
+ 3068              	.LFB9:
+ 312:../lab12-foreback.c **** 
+ 313:../lab12-foreback.c **** void Task7( void )  /* Cada vez que se presione un pulsador lo avisa por la UART0 */
+ 314:../lab12-foreback.c **** {
+ 3069              		.loc 1 314 0
+ 3070              		.cfi_startproc
+ 3071              		@ Function supports interworking.
+ 3072              		@ args = 0, pretend = 0, frame = 0
+ 3073              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3074 0750 0DC0A0E1 		mov	ip, sp
+ 3075              	.LCFI18:
+ 3076              		.cfi_def_cfa_register 12
+ 3077 0754 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 3078 0758 04B04CE2 		sub	fp, ip, #4
+ 3079              		.cfi_offset 14, -8
+ 3080              		.cfi_offset 13, -12
+ 3081              		.cfi_offset 11, -16
+ 3082              	.LCFI19:
+ 3083              		.cfi_def_cfa 11, 4
+ 315:../lab12-foreback.c ****     static boolean init = TRUE;
+ 316:../lab12-foreback.c **** 
+ 317:../lab12-foreback.c ****     if( init )
+ 3084              		.loc 1 317 0
+ 3085 075c 34309FE5 		ldr	r3, .L66
+ 3086 0760 0030D3E5 		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 3087 0764 000053E3 		cmp	r3, #0
+ 3088 0768 0500000A 		beq	.L64
+ 318:../lab12-foreback.c ****     {
+ 319:../lab12-foreback.c ****         init = FALSE;
+ 3089              		.loc 1 319 0
+ 3090 076c 24309FE5 		ldr	r3, .L66
+ 3091 0770 0020A0E3 		mov	r2, #0
+ 3092 0774 0020C3E5 		strb	r2, [r3, #0]
+ 320:../lab12-foreback.c ****         uart0_puts( " Task 7: iniciada.\n" );  /* Muestra un mensaje inicial en la UART0 (no es nec
+ 3093              		.loc 1 320 0
+ 3094 0778 1C009FE5 		ldr	r0, .L66+4
+ 3095 077c FEFFFFEB 		bl	uart0_puts
+ 3096 0780 010000EA 		b	.L63
+ 3097              	.L64:
+ 321:../lab12-foreback.c ****     }
+ 322:../lab12-foreback.c ****     else
+ 323:../lab12-foreback.c ****     {   
+ 324:../lab12-foreback.c ****         uart0_puts( "  (Task 7) Se ha pulsado algún pushbutton...\n" );
+ 3098              		.loc 1 324 0
+ 3099 0784 14009FE5 		ldr	r0, .L66+8
+ 3100 0788 FEFFFFEB 		bl	uart0_puts
+ 3101              	.L63:
+ 325:../lab12-foreback.c ****     }
+ 326:../lab12-foreback.c **** }
+ 3102              		.loc 1 326 0
+ 3103 078c 0CD04BE2 		sub	sp, fp, #12
+ 3104 0790 00689DE8 		ldmfd	sp, {fp, sp, lr}
+ 3105 0794 1EFF2FE1 		bx	lr
+ 3106              	.L67:
+ 3107              		.align	2
+ 3108              	.L66:
+ 3109 0798 08000000 		.word	init.4218
+ 3110 079c 64010000 		.word	.LC16
+ 3111 07a0 78010000 		.word	.LC17
+ 3112              		.cfi_endproc
+ 3113              	.LFE9:
+ 3115              		.align	2
+ 3116              		.global	isr_pb
+ 3118              	isr_pb:
+ 3119              	.LFB10:
+ 327:../lab12-foreback.c **** 
+ 328:../lab12-foreback.c **** /*******************************************************************/
+ 329:../lab12-foreback.c **** 
+ 330:../lab12-foreback.c **** void isr_pb( void )
+ 331:../lab12-foreback.c **** {
+ 3120              		.loc 1 331 0
+ 3121              		.cfi_startproc
+ 3122              		@ Interrupt Service Routine.
+ 3123              		@ args = 0, pretend = 0, frame = 0
+ 3124              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3125 07a4 04C02DE5 		str	ip, [sp, #-4]!
+ 3126 07a8 0DC0A0E1 		mov	ip, sp
+ 3127              	.LCFI20:
+ 3128              		.cfi_def_cfa_register 12
+ 3129 07ac 0CD82DE9 		stmfd	sp!, {r2, r3, fp, ip, lr, pc}
+ 3130 07b0 04B04CE2 		sub	fp, ip, #4
+ 3131              		.cfi_offset 14, -8
+ 3132              		.cfi_offset 13, -12
+ 3133              		.cfi_offset 11, -16
+ 3134              		.cfi_offset 3, -20
+ 3135              		.cfi_offset 2, -24
+ 3136              	.LCFI21:
+ 3137              		.cfi_def_cfa 11, 4
+ 332:../lab12-foreback.c ****     flagPb = TRUE;
+ 3138              		.loc 1 332 0
+ 3139 07b4 2C309FE5 		ldr	r3, .L69
+ 3140 07b8 0120A0E3 		mov	r2, #1
+ 3141 07bc 0020C3E5 		strb	r2, [r3, #0]
+ 333:../lab12-foreback.c ****     EXTINTPND = BIT_RIGHTPB | BIT_LEFTPB;
+ 3142              		.loc 1 333 0
+ 3143 07c0 24309FE5 		ldr	r3, .L69+4
+ 3144 07c4 0C20A0E3 		mov	r2, #12
+ 3145 07c8 002083E5 		str	r2, [r3, #0]
+ 334:../lab12-foreback.c ****     I_ISPC = BIT_PB;
+ 3146              		.loc 1 334 0
+ 3147 07cc 1C309FE5 		ldr	r3, .L69+8
+ 3148 07d0 0226A0E3 		mov	r2, #2097152
+ 3149 07d4 002083E5 		str	r2, [r3, #0]
+ 335:../lab12-foreback.c **** }
+ 3150              		.loc 1 335 0
+ 3151 07d8 14D04BE2 		sub	sp, fp, #20
+ 3152 07dc 0C689DE8 		ldmfd	sp, {r2, r3, fp, sp, lr}
+ 3153 07e0 04C09DE4 		ldmfd	sp!, {ip}
+ 3154 07e4 04F05EE2 		subs	pc, lr, #4
+ 3155              	.L70:
+ 3156              		.align	2
+ 3157              	.L69:
+ 3158 07e8 00000000 		.word	flagPb
+ 3159 07ec 5400D201 		.word	30539860
+ 3160 07f0 2400E001 		.word	31457316
+ 3161              		.cfi_endproc
+ 3162              	.LFE10:
+ 3164              		.align	2
+ 3165              		.global	isr_tick
+ 3167              	isr_tick:
+ 3168              	.LFB11:
+ 336:../lab12-foreback.c **** 
+ 337:../lab12-foreback.c **** void isr_tick( void )
+ 338:../lab12-foreback.c **** {  
+ 3169              		.loc 1 338 0
+ 3170              		.cfi_startproc
+ 3171              		@ Interrupt Service Routine.
+ 3172              		@ args = 0, pretend = 0, frame = 0
+ 3173              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3174 07f4 04C02DE5 		str	ip, [sp, #-4]!
+ 3175 07f8 0DC0A0E1 		mov	ip, sp
+ 3176              	.LCFI22:
+ 3177              		.cfi_def_cfa_register 12
+ 3178 07fc 0CD82DE9 		stmfd	sp!, {r2, r3, fp, ip, lr, pc}
+ 3179 0800 04B04CE2 		sub	fp, ip, #4
+ 3180              		.cfi_offset 14, -8
+ 3181              		.cfi_offset 13, -12
+ 3182              		.cfi_offset 11, -16
+ 3183              		.cfi_offset 3, -20
+ 3184              		.cfi_offset 2, -24
+ 3185              	.LCFI23:
+ 3186              		.cfi_def_cfa 11, 4
+ 339:../lab12-foreback.c ****     static uint16 cont5ticks    = 5;
+ 340:../lab12-foreback.c ****     static uint16 cont50ticks   = 50;
+ 341:../lab12-foreback.c ****     static uint16 cont100ticks  = 100;
+ 342:../lab12-foreback.c ****     static uint16 cont1000ticks = 1000;
+ 343:../lab12-foreback.c ****     
+ 344:../lab12-foreback.c ****     if( !(--cont5ticks) )
+ 3187              		.loc 1 344 0
+ 3188 0804 30319FE5 		ldr	r3, .L76
+ 3189 0808 B030D3E1 		ldrh	r3, [r3, #0]
+ 3190 080c 013043E2 		sub	r3, r3, #1
+ 3191 0810 0338A0E1 		mov	r3, r3, asl #16
+ 3192 0814 2328A0E1 		mov	r2, r3, lsr #16
+ 3193 0818 1C319FE5 		ldr	r3, .L76
+ 3194 081c B020C3E1 		strh	r2, [r3, #0]	@ movhi
+ 3195 0820 14319FE5 		ldr	r3, .L76
+ 3196 0824 B030D3E1 		ldrh	r3, [r3, #0]
+ 3197 0828 000053E3 		cmp	r3, #0
+ 3198 082c 0500001A 		bne	.L72
+ 345:../lab12-foreback.c ****     {
+ 346:../lab12-foreback.c ****         cont5ticks = 5;
+ 3199              		.loc 1 346 0
+ 3200 0830 04319FE5 		ldr	r3, .L76
+ 3201 0834 0520A0E3 		mov	r2, #5
+ 3202 0838 B020C3E1 		strh	r2, [r3, #0]	@ movhi
+ 347:../lab12-foreback.c ****         flagReadKeypad = TRUE;  
+ 3203              		.loc 1 347 0
+ 3204 083c FC309FE5 		ldr	r3, .L76+4
+ 3205 0840 0120A0E3 		mov	r2, #1
+ 3206 0844 0020C3E5 		strb	r2, [r3, #0]
+ 3207              	.L72:
+ 348:../lab12-foreback.c ****     }
+ 349:../lab12-foreback.c ****     if( !(--cont50ticks) )
+ 3208              		.loc 1 349 0
+ 3209 0848 F4309FE5 		ldr	r3, .L76+8
+ 3210 084c B030D3E1 		ldrh	r3, [r3, #0]
+ 3211 0850 013043E2 		sub	r3, r3, #1
+ 3212 0854 0338A0E1 		mov	r3, r3, asl #16
+ 3213 0858 2328A0E1 		mov	r2, r3, lsr #16
+ 3214 085c E0309FE5 		ldr	r3, .L76+8
+ 3215 0860 B020C3E1 		strh	r2, [r3, #0]	@ movhi
+ 3216 0864 D8309FE5 		ldr	r3, .L76+8
+ 3217 0868 B030D3E1 		ldrh	r3, [r3, #0]
+ 3218 086c 000053E3 		cmp	r3, #0
+ 3219 0870 0500001A 		bne	.L73
+ 350:../lab12-foreback.c ****     {
+ 351:../lab12-foreback.c ****         cont50ticks = 50;
+ 3220              		.loc 1 351 0
+ 3221 0874 C8309FE5 		ldr	r3, .L76+8
+ 3222 0878 3220A0E3 		mov	r2, #50
+ 3223 087c B020C3E1 		strh	r2, [r3, #0]	@ movhi
+ 352:../lab12-foreback.c ****         flagToggleLeds = TRUE;
+ 3224              		.loc 1 352 0
+ 3225 0880 C0309FE5 		ldr	r3, .L76+12
+ 3226 0884 0120A0E3 		mov	r2, #1
+ 3227 0888 0020C3E5 		strb	r2, [r3, #0]
+ 3228              	.L73:
+ 353:../lab12-foreback.c ****     }        
+ 354:../lab12-foreback.c ****     if( !(--cont100ticks) )
+ 3229              		.loc 1 354 0
+ 3230 088c B8309FE5 		ldr	r3, .L76+16
+ 3231 0890 B030D3E1 		ldrh	r3, [r3, #0]
+ 3232 0894 013043E2 		sub	r3, r3, #1
+ 3233 0898 0338A0E1 		mov	r3, r3, asl #16
+ 3234 089c 2328A0E1 		mov	r2, r3, lsr #16
+ 3235 08a0 A4309FE5 		ldr	r3, .L76+16
+ 3236 08a4 B020C3E1 		strh	r2, [r3, #0]	@ movhi
+ 3237 08a8 9C309FE5 		ldr	r3, .L76+16
+ 3238 08ac B030D3E1 		ldrh	r3, [r3, #0]
+ 3239 08b0 000053E3 		cmp	r3, #0
+ 3240 08b4 0800001A 		bne	.L74
+ 355:../lab12-foreback.c ****     {
+ 356:../lab12-foreback.c ****         cont100ticks = 100;
+ 3241              		.loc 1 356 0
+ 3242 08b8 8C309FE5 		ldr	r3, .L76+16
+ 3243 08bc 6420A0E3 		mov	r2, #100
+ 3244 08c0 B020C3E1 		strh	r2, [r3, #0]	@ movhi
+ 357:../lab12-foreback.c ****         flagWriteRTC  = TRUE;
+ 3245              		.loc 1 357 0
+ 3246 08c4 84309FE5 		ldr	r3, .L76+20
+ 3247 08c8 0120A0E3 		mov	r2, #1
+ 3248 08cc 0020C3E5 		strb	r2, [r3, #0]
+ 358:../lab12-foreback.c ****         flagTask9	  = TRUE;
+ 3249              		.loc 1 358 0
+ 3250 08d0 7C309FE5 		ldr	r3, .L76+24
+ 3251 08d4 0120A0E3 		mov	r2, #1
+ 3252 08d8 0020C3E5 		strb	r2, [r3, #0]
+ 3253              	.L74:
+ 359:../lab12-foreback.c ****     }    
+ 360:../lab12-foreback.c ****     if( !(--cont1000ticks) )
+ 3254              		.loc 1 360 0
+ 3255 08dc 74309FE5 		ldr	r3, .L76+28
+ 3256 08e0 B030D3E1 		ldrh	r3, [r3, #0]
+ 3257 08e4 013043E2 		sub	r3, r3, #1
+ 3258 08e8 0338A0E1 		mov	r3, r3, asl #16
+ 3259 08ec 2328A0E1 		mov	r2, r3, lsr #16
+ 3260 08f0 60309FE5 		ldr	r3, .L76+28
+ 3261 08f4 B020C3E1 		strh	r2, [r3, #0]	@ movhi
+ 3262 08f8 58309FE5 		ldr	r3, .L76+28
+ 3263 08fc B030D3E1 		ldrh	r3, [r3, #0]
+ 3264 0900 000053E3 		cmp	r3, #0
+ 3265 0904 0500001A 		bne	.L75
+ 361:../lab12-foreback.c ****     {
+ 362:../lab12-foreback.c ****         cont1000ticks = 1000;
+ 3266              		.loc 1 362 0
+ 3267 0908 48309FE5 		ldr	r3, .L76+28
+ 3268 090c FA2FA0E3 		mov	r2, #1000
+ 3269 0910 B020C3E1 		strh	r2, [r3, #0]	@ movhi
+ 363:../lab12-foreback.c ****         flagWriteTicks = TRUE;
+ 3270              		.loc 1 363 0
+ 3271 0914 40309FE5 		ldr	r3, .L76+32
+ 3272 0918 0120A0E3 		mov	r2, #1
+ 3273 091c 0020C3E5 		strb	r2, [r3, #0]
+ 3274              	.L75:
+ 364:../lab12-foreback.c ****     }   
+ 365:../lab12-foreback.c ****     
+ 366:../lab12-foreback.c ****     I_ISPC = BIT_TIMER0;
+ 3275              		.loc 1 366 0
+ 3276 0920 38309FE5 		ldr	r3, .L76+36
+ 3277 0924 022AA0E3 		mov	r2, #8192
+ 3278 0928 002083E5 		str	r2, [r3, #0]
+ 367:../lab12-foreback.c **** };
+ 3279              		.loc 1 367 0
+ 3280 092c 14D04BE2 		sub	sp, fp, #20
+ 3281 0930 0C689DE8 		ldmfd	sp, {r2, r3, fp, sp, lr}
+ 3282 0934 04C09DE4 		ldmfd	sp!, {ip}
+ 3283 0938 04F05EE2 		subs	pc, lr, #4
+ 3284              	.L77:
+ 3285              		.align	2
+ 3286              	.L76:
+ 3287 093c 00000000 		.word	cont5ticks.4225
+ 3288 0940 00000000 		.word	flagReadKeypad
+ 3289 0944 02000000 		.word	cont50ticks.4226
+ 3290 0948 00000000 		.word	flagToggleLeds
+ 3291 094c 04000000 		.word	cont100ticks.4227
+ 3292 0950 00000000 		.word	flagWriteRTC
+ 3293 0954 00000000 		.word	flagTask9
+ 3294 0958 06000000 		.word	cont1000ticks.4228
+ 3295 095c 00000000 		.word	flagWriteTicks
+ 3296 0960 2400E001 		.word	31457316
+ 3297              		.cfi_endproc
+ 3298              	.LFE11:
+ 3300              		.data
+ 3301              		.align	1
+ 3304              	cont5ticks.4225:
+ 3305 0000 0500     		.short	5
+ 3306              		.align	1
+ 3309              	cont50ticks.4226:
+ 3310 0002 3200     		.short	50
+ 3311              		.align	1
+ 3314              	cont100ticks.4227:
+ 3315 0004 6400     		.short	100
+ 3316              		.align	1
+ 3319              	cont1000ticks.4228:
+ 3320 0006 E803     		.short	1000
+ 3323              	init.4218:
+ 3324 0008 01       		.byte	1
+ 3327              	init.4214:
+ 3328 0009 01       		.byte	1
+ 3331              	init.4210:
+ 3332 000a 01       		.byte	1
+ 3335              	init.4205:
+ 3336 000b 01       		.byte	1
+ 3337              		.bss
+ 3338              		.align	2
+ 3339              	ticks.4206:
+ 3340 0000 00000000 		.space	4
+ 3341              		.data
+ 3344              	init.4200:
+ 3345 000c 01       		.byte	1
+ 3348              	init.4187:
+ 3349 000d 01       		.byte	1
+ 3350              		.bss
+ 3351              	state.4192:
+ 3352 0004 00       		.space	1
+ 3353 0005 000000   		.data
+ 3356              	init.4183:
+ 3357 000e 01       		.byte	1
+ 3360              	init.4177:
+ 3361 000f 01       		.byte	1
+ 3364              	init.4173:
+ 3365 0010 01       		.byte	1
+ 3366 0011 00       		.text
+ 3367              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 lab12-foreback.c
+                            *COM*:00000001 scancode
+                            *COM*:00000001 flagTask5
+                            *COM*:00000001 flagTask6
+                            *COM*:00000001 flagTask8
+                            *COM*:00000001 flagTask9
+                            *COM*:00000001 flagPb
+                            *COM*:00000001 flagToggleLeds
+                            *COM*:00000001 flagReadKeypad
+                            *COM*:00000001 flagWriteRTC
+                            *COM*:00000001 flagWriteTicks
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2142   .rodata:00000000 $d
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2151   .text:00000000 $a
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2154   .text:00000000 main
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2572   .text:000003b4 Task1
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2636   .text:0000041c Task2
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2774   .text:00000548 Task3
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2860   .text:000005ec Task4
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2939   .text:00000680 Task5
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3005   .text:000006f4 Task6
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3067   .text:00000750 Task7
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2411   .text:00000264 Task8
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2481   .text:000002e0 Task9
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2384   .text:00000230 $d
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3118   .text:000007a4 isr_pb
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3167   .text:000007f4 isr_tick
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2408   .text:00000264 $a
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2463   .text:000002d0 $d
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3364   .data:00000010 init.4173
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2478   .text:000002e0 $a
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2558   .text:000003a8 $d
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3360   .data:0000000f init.4177
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2569   .text:000003b4 $a
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2623   .text:00000414 $d
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3356   .data:0000000e init.4183
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2633   .text:0000041c $a
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2750   .text:0000052c $d
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3348   .data:0000000d init.4187
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3351   .bss:00000004 state.4192
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2771   .text:00000548 $a
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2842   .text:000005dc $d
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3344   .data:0000000c init.4200
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2857   .text:000005ec $a
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2920   .text:0000066c $d
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3335   .data:0000000b init.4205
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3339   .bss:00000000 ticks.4206
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2936   .text:00000680 $a
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:2989   .text:000006e0 $d
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3331   .data:0000000a init.4210
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3002   .text:000006f4 $a
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3049   .text:00000744 $d
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3327   .data:00000009 init.4214
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3064   .text:00000750 $a
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3109   .text:00000798 $d
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3323   .data:00000008 init.4218
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3115   .text:000007a4 $a
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3158   .text:000007e8 $d
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3164   .text:000007f4 $a
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3287   .text:0000093c $d
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3304   .data:00000000 cont5ticks.4225
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3309   .data:00000002 cont50ticks.4226
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3314   .data:00000004 cont100ticks.4227
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3319   .data:00000006 cont1000ticks.4228
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3301   .data:00000000 $d
+C:\Users\javie\AppData\Local\Temp\ccFvcsMx.s:3338   .bss:00000000 $d
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+sys_init
+timers_init
+uart0_init
+leds_init
+segs_init
+rtc_init
+pbs_init
+keypad_init
+lcd_init
+uart0_puts
+lcd_on
+lcd_clear
+pbs_open
+timer0_open_tick
+sleep
+lcd_puts_x2
+lcd_puthex_x2
+rtc_gettime
+lcd_putint_x2
+led_on
+led_off
+led_toggle
+keypad_pressed
+keypad_scan
+uart0_putint
+uart0_putchar
+uart0_puthex
+segs_putchar

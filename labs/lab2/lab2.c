@@ -1,0 +1,35 @@
+/*-------------------------------------------------------------------
+**
+**  Fichero:
+**    lab2.c  14/3/2016
+**
+**    (c) J.M. Mendias
+**    Programación de Sistemas y Dispositivos
+**    Facultad de Informática. Universidad Complutense de Madrid
+**
+**  Propósito:
+**    Test del laboratorio 2
+**
+**  Notas de diseño:
+**    Presupone que todo el SoC ha sido previamente configurado
+**    por el programa residente en ROM que se ejecuta tras reset
+**
+**-----------------------------------------------------------------*/
+//Pablo García Fernández y Javier Orbis Ramírez
+//Lab 8 Puesto 4
+#define PCONB (*(volatile unsigned int *)0x01d20008)
+#define PDATB (*(volatile unsigned int *)0x01d2000c)
+#define PCONG (*(volatile unsigned int *)0x01d20040)
+#define PDATG (*(volatile unsigned int *)0x01d20044)
+#define PUPG  (*(volatile unsigned int *)0x01d20048)
+    
+void main(void) 
+{
+    PCONB &= ~( (1<<10) | (1<<9) );  // PB[10] = out, PF[9] = out
+    PCONG &= ~( (3<<14) | (3<<12) );  // PG[7] = in, PG[6] = in
+    //PCONG &= ~( (0xf<<12) );
+    PUPG  |= (3<<6);                 // Deshabilita pull-up de PG[7] y PG[6]
+
+    while( 1 )
+        PDATB = PDATG << 3;    // PB[10:9] = PG[7:6]
+}
